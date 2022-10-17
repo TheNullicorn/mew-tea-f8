@@ -8,7 +8,7 @@ class ModifiedUtf8IOException(message: String? = null, cause: Throwable? = null)
 
 @InternalMewTeaF8Api
 class CharacterStartedTooLateException(charSize: Int, bytesLeft: Int) : ModifiedUtf8Exception(
-    message = "A ${charSize}-byte character was started with only $bytesLeft left in the string"
+    message = "A ${charSize}-byte character was started with${if (bytesLeft > 0) "only" else ""} $bytesLeft bytes left in the string"
 )
 
 @InternalMewTeaF8Api
