@@ -7,4 +7,4 @@ pluginManagement {
     }
 }
 
-include("mew-tea-f8-internal")
+include("mew-tea-f8-common")
