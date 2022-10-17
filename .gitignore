@@ -1,8 +1,9 @@
 # IGNORE (Everything by Default)
 *
+!/*
 
 # KEEP (Gradle Subprojects)
-!modified-utf8-internal/
+!mew-tea-f8-internal/**
 
 # KEEP (Gradle Configuration)
 !build.gradle.kts

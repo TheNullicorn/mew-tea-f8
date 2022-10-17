@@ -1,4 +1,4 @@
-rootProject.name = "modified-utf8"
+rootProject.name = "mew-tea-f8"
 
 pluginManagement {
     repositories {
@@ -7,4 +7,4 @@ pluginManagement {
     }
 }
 
-include("modified-utf8-internal")
+include("mew-tea-f8-internal")

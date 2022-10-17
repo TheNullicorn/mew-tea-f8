@@ -28,6 +28,7 @@ subprojects {
     }
 
     // Configures the same multiplatform targets for all subprojects.
+    @Suppress("UNUSED_VARIABLE")
     configure<KotlinMultiplatformExtension> {
         jvm {
             compilations.all {
@@ -44,13 +45,13 @@ subprojects {
             browser()
         }
 
-        val hostOs = java.lang.System.getProperty("os.name")
+        val hostOs = System.getProperty("os.name")
         val isMingwX64 = hostOs.startsWith("Windows")
         val nativeTarget = when {
             hostOs == "Mac OS X" -> macosX64("native")
             hostOs == "Linux" -> linuxX64("native")
             isMingwX64 -> mingwX64("native")
-            else -> throw org.gradle.api.GradleException("Host OS is not supported in Kotlin/Native.")
+            else -> throw GradleException("Host OS is not supported in Kotlin/Native.")
         }
 
         sourceSets {
@@ -75,7 +76,7 @@ subprojects {
                 for (sourceSet in kotlinExtension.sourceSets)
                     for (sourceDir in sourceSet.kotlin.srcDirs) {
                         val relativeSourceDir = sourceDir.toRelativeString(base = projectDir)
-                        packagePrefix[relativeSourceDir] = "me.nullicorn.mutf8"
+                        packagePrefix[relativeSourceDir] = "me.nullicorn.mewteaf8"
                     }
             }
         }
