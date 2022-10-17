@@ -1,0 +1,21 @@
+# IGNORE (Everything by Default)
+*
+
+# KEEP (Gradle Subprojects)
+!modified-utf8-internal/
+
+# KEEP (Gradle Configuration)
+!build.gradle.kts
+!settings.gradle.kts
+!gradle.properties
+
+# KEEP (Gradle Wrapper)
+!gradle/
+!gradlew
+!gradlew.bat
+
+# IGNORE (Gradle Builds)
+**/build
+
+# KEEP (This File)
+!.gitignore
