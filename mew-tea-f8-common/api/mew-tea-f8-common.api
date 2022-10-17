@@ -1,0 +1,4 @@
+public final class me/nullicorn/mewteaf8/ModifiedUtf8Length {
+	public static final synthetic fun of (Ljava/lang/CharSequence;)J
+}
+
