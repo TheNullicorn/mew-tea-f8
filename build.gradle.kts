@@ -1,3 +1,4 @@
+import kotlinx.validation.ApiValidationExtension
 import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.jetbrains.gradle.ext.packagePrefix
 import org.jetbrains.gradle.ext.settings
@@ -13,6 +14,8 @@ plugins {
 
 group = "me.nullicorn"
 version = "0.0.1-SNAPSHOT"
+
+val rootPackage: String = properties["library.root_package"] as String
 
 repositories {
     mavenCentral()
@@ -76,9 +79,14 @@ subprojects {
                 for (sourceSet in kotlinExtension.sourceSets)
                     for (sourceDir in sourceSet.kotlin.srcDirs) {
                         val relativeSourceDir = sourceDir.toRelativeString(base = projectDir)
-                        packagePrefix[relativeSourceDir] = "me.nullicorn.mewteaf8"
+                        packagePrefix[relativeSourceDir] = rootPackage
                     }
             }
         }
+    }
+
+    configure<ApiValidationExtension> {
+        ignoredPackages += "${rootPackage}.internal"
+        nonPublicMarkers += "${rootPackage}.internal.InternalMewTeaF8Api"
     }
 }
