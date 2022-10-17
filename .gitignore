@@ -2,8 +2,11 @@
 *
 !/*
 
+# KEEP (License)
+!/LICENSE.txt
+
 # KEEP (Gradle Subprojects)
-!mew-tea-f8-internal/**
+!mew-tea-f8-*/**
 
 # KEEP (Gradle Configuration)
 !build.gradle.kts
@@ -15,8 +18,8 @@
 !gradlew
 !gradlew.bat
 
+# KEEP (This File)
+!/.gitignore
+
 # IGNORE (Gradle Builds)
 **/build
-
-# KEEP (This File)
-!.gitignore
