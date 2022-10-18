@@ -170,6 +170,9 @@ private class InputStreamMutf8ByteSource(private val stream: InputStream) : Modi
             throw ModifiedUtf8IOException("Failed to read the length of a Modified UTF-8 string", cause)
         }
 
+        if (byte1 == -1 || byte2 == -1)
+            throw ModifiedUtf8EOFException("Data ended while reading the length of a Modified UTF-8 string")
+
         return ((byte1 and 0xFF shl 8) or (byte2 and 0xFF)).toUShort()
     }
 }
