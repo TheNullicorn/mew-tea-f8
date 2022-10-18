@@ -7,6 +7,9 @@ sealed class ModifiedUtf8Exception(message: String? = null, cause: Throwable? = 
 class ModifiedUtf8IOException(message: String? = null, cause: Throwable? = null) : ModifiedUtf8Exception(message, cause)
 
 @InternalMewTeaF8Api
+class ModifiedUtf8EOFException(message: String? = null, cause: Throwable? = null) : ModifiedUtf8Exception(message, cause)
+
+@InternalMewTeaF8Api
 class CharacterStartedTooLateException(charSize: Int, bytesLeft: Int) : ModifiedUtf8Exception(
     message = "A ${charSize}-byte character was started with${if (bytesLeft > 0) "only" else ""} $bytesLeft bytes left in the string"
 )
