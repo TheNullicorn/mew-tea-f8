@@ -118,7 +118,7 @@ interface ModifiedUtf8ByteSource {
                 byte2 = bytes.getSecondaryByteOfChar(b++, charSize = { 3 }, byteOffset = { 1 })
                 byte3 = bytes.getSecondaryByteOfChar(b++, charSize = { 3 }, byteOffset = { 2 })
 
-                chars[c++] = ((byte1 and 0x0F shl 12) or (byte2 and 0x1F shl 6) or (byte3 and 0x1F)).toChar()
+                chars[c++] = ((byte1 and 0x0F shl 12) or (byte2 and 0x3F shl 6) or (byte3 and 0x3F)).toChar()
                 continue
             }
 
