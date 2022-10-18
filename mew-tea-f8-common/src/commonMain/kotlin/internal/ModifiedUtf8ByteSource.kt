@@ -1,4 +1,8 @@
+@file:JvmSynthetic
+
 package me.nullicorn.mewteaf8.internal
+
+import kotlin.jvm.JvmSynthetic
 
 /**
  * A sequence of bytes that can be read in bulk, specifically for the purpose of reading Modified UTF-8 strings.

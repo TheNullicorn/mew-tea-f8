@@ -1,4 +1,8 @@
+@file:JvmSynthetic
+
 package me.nullicorn.mewteaf8.internal
+
+import kotlin.jvm.JvmSynthetic
 
 @InternalMewTeaF8Api
 sealed class ModifiedUtf8Exception(message: String? = null, cause: Throwable? = null) : Exception(message, cause)

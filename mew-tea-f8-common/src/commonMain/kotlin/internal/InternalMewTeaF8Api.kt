@@ -1,7 +1,10 @@
+@file:JvmSynthetic
+
 package me.nullicorn.mewteaf8.internal
 
 import kotlin.annotation.AnnotationRetention.BINARY
 import kotlin.annotation.AnnotationTarget.*
+import kotlin.jvm.JvmSynthetic
 
 /**
  * Indicates that the annotated member is intended to be used inside mew-tea-f8 only.
