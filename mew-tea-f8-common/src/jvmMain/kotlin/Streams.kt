@@ -120,20 +120,22 @@ fun InputStream.readMutf8Contents(mutf8Length: UShort): String = try {
  */
 private fun ModifiedUtf8Exception.toBuiltInJavaException(): IOException =
     when (this) {
+        // NOTE: `UTFDataFormatException` and `EOFException` don't have a `cause` parameters, so we just replace the
+        //       `stackTrace` with the original exception's `stackTrace` manually.
+
         is MalformedPrimaryByteException,
         is MalformedSecondaryByteException,
         is CharacterStartedTooLateException ->
-            UTFDataFormatException(message)
+            (cause as? UTFDataFormatException) ?: UTFDataFormatException(message)
+                .also { it.stackTrace = (cause ?: this).stackTrace }
 
         is ModifiedUtf8EOFException ->
-            EOFException(message)
+            (cause as? EOFException) ?: EOFException(message)
+                .also { it.stackTrace = (cause ?: this).stackTrace }
 
-        // IOException does let us provide a `cause`, but for consistency with the other two, we'll still just set the
-        // `stackTrace` manually outside the `when` block.
         is ModifiedUtf8IOException ->
-            IOException(message)
-
-    }.also { it.stackTrace = stackTrace }
+            (cause as? IOException) ?: IOException(message, cause ?: this)
+    }
 
 /**
  * A [ModifiedUtf8ByteSource] that reads from an [InputStream].
