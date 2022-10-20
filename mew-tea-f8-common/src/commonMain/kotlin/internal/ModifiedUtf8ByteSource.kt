@@ -47,7 +47,7 @@ interface ModifiedUtf8ByteSource {
      * This is also the number of bytes that will be read from the source, assuming no exception is thrown.
      * @return the string that was encoded in those bytes.
      *
-     * @throws[ModifiedUtf8IOException] if the source does not have enough bytes left in it to read the amount
+     * @throws[ModifiedUtf8EOFException] if the source does not have enough bytes left in it to read the amount
      * specified by [utfLength].
      * @throws[ModifiedUtf8IOException] if an I/O related issue occurs while trying to read those bytes.
      * @throws[CharacterStartedTooLateException] if a 2-byte character starts on the last byte of the string, meaning

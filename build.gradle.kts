@@ -4,6 +4,7 @@ import org.jetbrains.gradle.ext.packagePrefix
 import org.jetbrains.gradle.ext.settings
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetDsl
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
@@ -44,8 +45,21 @@ subprojects {
         }
 
         js(BOTH) {
-            nodejs()
-            browser()
+            // Target both client & server-side JavaScript.
+            val jsTargets: List<(KotlinJsSubTargetDsl.() -> Unit) -> Unit> =
+                listOf(::nodejs, ::browser)
+
+            // Register & configure each target listed above.
+            for (jsTarget in jsTargets) {
+                jsTarget {
+                    testTask {
+                        useMocha {
+                            // Allow longer tests to run up to 10 seconds before failing.
+                            timeout = "0s"
+                        }
+                    }
+                }
+            }
         }
 
         val hostOs = System.getProperty("os.name")

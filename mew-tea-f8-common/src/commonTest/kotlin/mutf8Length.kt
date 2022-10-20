@@ -1,13 +1,10 @@
 package me.nullicorn.mewteaf8
 
 import kotlin.js.JsName
-import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class Mutf8LengthTests {
-
-    private val random = Random(seed = "mew-tea-f8".hashCode())
 
     // Characters encoded using 1 byte each. This range contains 127 characters.
     private val singleByteChars: Iterable<Char> = '\u0001'..'\u007F'
@@ -22,6 +19,7 @@ class Mutf8LengthTests {
         add('\uFFFF')
 
         // Add 998 other randomly selected characters. `random` has a constant seed, so these will always be the same.
+        val random = createReproducableRandom()
         while (size < 1000) {
             val char = random.nextBits(bitCount = 16).toChar()
             if (char in '\u0800'..'\uFFFF') add(char)
