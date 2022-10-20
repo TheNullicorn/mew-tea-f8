@@ -1,6 +1,6 @@
 @file:Suppress("PackageName")
 
-package me.nullicorn.mewteaf8.Mutf8ByteSource
+package me.nullicorn.mewteaf8.Mutf8Source
 
 import me.nullicorn.mewteaf8.createReproducableRandom
 import me.nullicorn.mewteaf8.internal.InternalMutf8Api
@@ -21,11 +21,11 @@ internal val tripleByteSamples = ('\u0000'..'\u07FF') + buildSet {
 }
 
 @InternalMutf8Api
-internal fun buildTestSource(builder: MutableList<Byte>.() -> Unit): TestingMutf8ByteSource =
-    TestingMutf8ByteSource(bytes = buildList(builder).toByteArray())
+internal fun buildTestSource(builder: MutableList<Byte>.() -> Unit): TestingMutf8Source =
+    TestingMutf8Source(bytes = buildList(builder).toByteArray())
 
 @InternalMutf8Api
-internal class TestingMutf8ByteSource(bytes: ByteArray) : Mutf8Source {
+internal class TestingMutf8Source(bytes: ByteArray) : Mutf8Source {
 
     private val bytes = bytes.copyOf()
     private var index = 0

@@ -1,6 +1,6 @@
 @file:Suppress("PackageName")
 
-package me.nullicorn.mewteaf8.Mutf8ByteSource
+package me.nullicorn.mewteaf8.Mutf8Source
 
 import me.nullicorn.mewteaf8.*
 import me.nullicorn.mewteaf8.internal.*
