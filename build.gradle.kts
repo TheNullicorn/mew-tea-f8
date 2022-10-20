@@ -101,6 +101,6 @@ subprojects {
 
     configure<ApiValidationExtension> {
         ignoredPackages += "${rootPackage}.internal"
-        nonPublicMarkers += "${rootPackage}.internal.InternalMewTeaF8Api"
+        nonPublicMarkers += "${rootPackage}.internal.InternalMutf8Api"
     }
 }

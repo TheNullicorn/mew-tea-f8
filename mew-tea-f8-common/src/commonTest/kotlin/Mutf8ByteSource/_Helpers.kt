@@ -1,11 +1,11 @@
 @file:Suppress("PackageName")
 
-package me.nullicorn.mewteaf8.ModifiedUtfByteSource
+package me.nullicorn.mewteaf8.Mutf8ByteSource
 
 import me.nullicorn.mewteaf8.createReproducableRandom
-import me.nullicorn.mewteaf8.internal.InternalMewTeaF8Api
-import me.nullicorn.mewteaf8.internal.ModifiedUtf8ByteSource
-import me.nullicorn.mewteaf8.internal.ModifiedUtf8EOFException
+import me.nullicorn.mewteaf8.internal.InternalMutf8Api
+import me.nullicorn.mewteaf8.internal.Mutf8Source
+import me.nullicorn.mewteaf8.internal.Mutf8EOFException
 
 internal val singleByteSamples = '\u0000'..'\u007F'
 internal val doubleByteSamples = '\u0000'..'\u07FF'
@@ -20,12 +20,12 @@ internal val tripleByteSamples = ('\u0000'..'\u07FF') + buildSet {
     }
 }
 
-@InternalMewTeaF8Api
-internal fun buildTestSource(builder: MutableList<Byte>.() -> Unit): TestingModifiedUtf8ByteSource =
-    TestingModifiedUtf8ByteSource(bytes = buildList(builder).toByteArray())
+@InternalMutf8Api
+internal fun buildTestSource(builder: MutableList<Byte>.() -> Unit): TestingMutf8ByteSource =
+    TestingMutf8ByteSource(bytes = buildList(builder).toByteArray())
 
-@InternalMewTeaF8Api
-internal class TestingModifiedUtf8ByteSource(bytes: ByteArray) : ModifiedUtf8ByteSource {
+@InternalMutf8Api
+internal class TestingMutf8ByteSource(bytes: ByteArray) : Mutf8Source {
 
     private val bytes = bytes.copyOf()
     private var index = 0
@@ -35,14 +35,14 @@ internal class TestingModifiedUtf8ByteSource(bytes: ByteArray) : ModifiedUtf8Byt
 
     override fun readBytes(amount: UShort): ByteArray {
         if (index + amount.toInt() > bytes.size)
-            throw ModifiedUtf8EOFException("Not enough bytes left to read $amount")
+            throw Mutf8EOFException("Not enough bytes left to read $amount")
 
         val chunk = bytes.copyOfRange(index, index + amount.toInt())
         index += amount.toInt()
         return chunk
     }
 
-    override fun readUtfLength(): UShort {
+    override fun readLength(): UShort {
         val byte1 = bytes[index++].toInt() and 0xFF
         val byte2 = bytes[index++].toInt() and 0xFF
         return ((byte1 shl 8) and byte2).toUShort()

@@ -7,8 +7,8 @@ import kotlin.jvm.JvmSynthetic
 /**
  * A sequence of bytes that can be read in bulk, specifically for the purpose of reading Modified UTF-8 strings.
  */
-@InternalMewTeaF8Api
-interface ModifiedUtf8ByteSource {
+@InternalMutf8Api
+interface Mutf8Source {
 
     /**
      * Reads a specific [amount] of bytes from the source and returns them in order as a [ByteArray].
@@ -16,8 +16,8 @@ interface ModifiedUtf8ByteSource {
      * @param[amount] The number of bytes to read.
      * @return an array, whose size equals [amount], of the next bytes that appear in the source in order.
      *
-     * @throws[ModifiedUtf8IOException] if the source does not have enough bytes left in it to supply the requested [amount].
-     * @throws[ModifiedUtf8IOException] if an I/O related issue occurs while trying to read those bytes.
+     * @throws[Mutf8IOException] if the source does not have enough bytes left in it to supply the requested [amount].
+     * @throws[Mutf8IOException] if an I/O related issue occurs while trying to read those bytes.
      */
     fun readBytes(amount: UShort): ByteArray
 
@@ -34,10 +34,10 @@ interface ModifiedUtf8ByteSource {
      *
      * @return the `length` value that appeared next in the source.
      *
-     * @throws[ModifiedUtf8IOException] if the source does not have enough bytes left in it to read the length.
-     * @throws[ModifiedUtf8IOException] if an I/O related issue occurs while trying to read those bytes.
+     * @throws[Mutf8IOException] if the source does not have enough bytes left in it to read the length.
+     * @throws[Mutf8IOException] if an I/O related issue occurs while trying to read those bytes.
      */
-    fun readUtfLength(): UShort
+    fun readLength(): UShort
 
     /**
      * Reads a Modified UTF-8 string from the source.
@@ -47,27 +47,27 @@ interface ModifiedUtf8ByteSource {
      * This is also the number of bytes that will be read from the source, assuming no exception is thrown.
      * @return the string that was encoded in those bytes.
      *
-     * @throws[ModifiedUtf8EOFException] if the source does not have enough bytes left in it to read the amount
+     * @throws[Mutf8EOFException] if the source does not have enough bytes left in it to read the amount
      * specified by [utfLength].
-     * @throws[ModifiedUtf8IOException] if an I/O related issue occurs while trying to read those bytes.
-     * @throws[CharacterStartedTooLateException] if a 2-byte character starts on the last byte of the string, meaning
+     * @throws[Mutf8IOException] if an I/O related issue occurs while trying to read those bytes.
+     * @throws[Mutf8TruncatedCharacterException] if a 2-byte character starts on the last byte of the string, meaning
      * the second byte doesn't actually exist.
-     * @throws[CharacterStartedTooLateException] if a 3-byte character starts on the last or second-to-last bytes of
+     * @throws[Mutf8TruncatedCharacterException] if a 3-byte character starts on the last or second-to-last bytes of
      * the string, meaning the second and/or third bytes don't actually exist.
-     * @throws[MalformedPrimaryByteException] if the first byte of a character has all 4 of its most-significant bits
+     * @throws[Mutf8MalformedPrimaryByteException] if the first byte of a character has all 4 of its most-significant bits
      * set, which is not expected of any byte in a Modified UTF-8 string. In other words, the bytes bits match the
      * pattern `1111 xxxx`, where each `x` can be either `1` or `0`.
-     * @throws[MalformedSecondaryByteException] if the second or third bytes of a 2-byte or 3-byte character don't have
+     * @throws[Mutf8MalformedSecondaryByteException] if the second or third bytes of a 2-byte or 3-byte character don't have
      * their most-significant bit set (`1`), and their second-most-significant bit unset (`0`). In other words, the
      * byte does not match the expected pattern, `10xx xxxx`, where each `x` can be either `1` or `0`.
      */
-    fun readModifiedUtf8(utfLength: UShort): String {
+    fun readString(utfLength: UShort): String {
         val utfLengthInt = utfLength.toInt()
 
         // Read all the string's bytes at once.
         val bytes = readBytes(amount = utfLength)
         if (bytes.size != utfLengthInt)
-            throw ModifiedUtf8IOException("$utfLength bytes were requested for the string, but only ${bytes.size} were received")
+            throw Mutf8IOException("$utfLength bytes were requested for the string, but only ${bytes.size} were received")
 
         // Create a possibly oversized array to hold the string's characters as we read them.
         val chars = CharArray(size = utfLengthInt)
@@ -95,7 +95,7 @@ interface ModifiedUtf8ByteSource {
             if (mostSigNibble == 0xC || mostSigNibble == 0xD) {
                 // Make sure we won't exceed the `utfLength` by reading the second byte.
                 if (b == utfLengthInt)
-                    throw CharacterStartedTooLateException(charSize = 2, bytesLeft = 0)
+                    throw Mutf8TruncatedCharacterException(charSize = 2, bytesLeft = 0)
 
                 // Read the second byte.
                 byte2 = bytes.getSecondaryByteOfChar(b++, charSize = { 2 }, byteOffset = { 1 })
@@ -108,11 +108,11 @@ interface ModifiedUtf8ByteSource {
             if (mostSigNibble == 0xE) {
                 // Make sure we won't exceed the `utfLength` by reading the second byte.
                 if (b == utfLengthInt)
-                    throw CharacterStartedTooLateException(charSize = 3, bytesLeft = 1)
+                    throw Mutf8TruncatedCharacterException(charSize = 3, bytesLeft = 1)
 
                 // Make sure we won't exceed the `utfLength` by reading the third byte.
                 if (b == utfLengthInt - 1)
-                    throw CharacterStartedTooLateException(charSize = 2, bytesLeft = 0)
+                    throw Mutf8TruncatedCharacterException(charSize = 2, bytesLeft = 0)
 
                 // Read the second & third bytes.
                 byte2 = bytes.getSecondaryByteOfChar(b++, charSize = { 3 }, byteOffset = { 1 })
@@ -124,7 +124,7 @@ interface ModifiedUtf8ByteSource {
 
             // The first byte matches the only pattern left, `1111xxxx`, which is not valid, so we consider the string
             // to be malformed.
-            throw MalformedPrimaryByteException(byte1)
+            throw Mutf8MalformedPrimaryByteException(byte1)
         }
 
         return chars.concatToString(startIndex = 0, endIndex = c)
@@ -145,11 +145,11 @@ interface ModifiedUtf8ByteSource {
  * This is only used in the message of an exception, if one is thrown.
  * @return the value of the byte at the given [index] in the array.
  *
- * @throws[MalformedSecondaryByteException] if the byte doesn't have its most-significant bit set (`1`), and its
+ * @throws[Mutf8MalformedSecondaryByteException] if the byte doesn't have its most-significant bit set (`1`), and its
  * second-most-significant bit unset (`0`). In other words, the byte does not match the expected pattern, `10xx xxxx`,
  * where each `x` can be either `1` or `0`.
  */
-@InternalMewTeaF8Api
+@InternalMutf8Api
 private inline fun ByteArray.getSecondaryByteOfChar(
     index: Int,
     charSize: () -> Int,
@@ -160,7 +160,7 @@ private inline fun ByteArray.getSecondaryByteOfChar(
     // The 2nd and 3rd bytes of 2-byte and 3-byte characters always have `10` as their two most-significant bits. If
     // not, the character is considered malformed, so we throw an exception.
     if (byte and 0xC0 != 0x80)
-        throw MalformedSecondaryByteException(byte, charSize(), byteOffset())
+        throw Mutf8MalformedSecondaryByteException(byte, charSize(), byteOffset())
 
     return byte
 }

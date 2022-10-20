@@ -16,4 +16,4 @@ import kotlin.jvm.JvmSynthetic
 @Target(CLASS, PROPERTY, FUNCTION)
 @Retention(BINARY)
 @RequiresOptIn
-annotation class InternalMewTeaF8Api
+annotation class InternalMutf8Api

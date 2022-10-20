@@ -1,5 +1,5 @@
-@file:JvmName("ModifiedUtf8Streams")
-@file:OptIn(InternalMewTeaF8Api::class)
+@file:JvmName("Mutf8InputStreams")
+@file:OptIn(InternalMutf8Api::class)
 
 package me.nullicorn.mewteaf8
 
@@ -38,9 +38,9 @@ fun InputStream.readMutf8String(): String {
     val source = InputStreamMutf8ByteSource(this)
 
     try {
-        val mutf8Length = source.readUtfLength()
-        return source.readModifiedUtf8(mutf8Length)
-    } catch (cause: ModifiedUtf8Exception) {
+        val mutf8Length = source.readLength()
+        return source.readString(mutf8Length)
+    } catch (cause: Mutf8Exception) {
         throw cause.toBuiltInJavaException()
     }
 }
@@ -73,8 +73,8 @@ fun InputStream.readMutf8String(): String {
 @JvmName("readLengthFrom")
 @Throws(EOFException::class, IOException::class)
 fun InputStream.readMutf8Length(): UShort = try {
-    InputStreamMutf8ByteSource(this).readUtfLength()
-} catch (cause: ModifiedUtf8Exception) {
+    InputStreamMutf8ByteSource(this).readLength()
+} catch (cause: Mutf8Exception) {
     throw cause.toBuiltInJavaException()
 }
 
@@ -98,68 +98,68 @@ fun InputStream.readMutf8Length(): UShort = try {
 @JvmName("readContentsFrom")
 @Throws(UTFDataFormatException::class, EOFException::class, IOException::class)
 fun InputStream.readMutf8Contents(mutf8Length: UShort): String = try {
-    InputStreamMutf8ByteSource(this).readModifiedUtf8(mutf8Length)
-} catch (cause: ModifiedUtf8Exception) {
+    InputStreamMutf8ByteSource(this).readString(mutf8Length)
+} catch (cause: Mutf8Exception) {
     throw cause.toBuiltInJavaException()
 }
 
 //region Private Helpers
 
 /**
- * Converts a [ModifiedUtf8Exception] into whatever type of exception [DataInput.readUTF] would throw if the same issue
+ * Converts a [Mutf8Exception] into whatever type of exception [DataInput.readUTF] would throw if the same issue
  * arose.
  *
  * This method does not throw the resulting exception, but returns it. It is the caller's responsibility to throw it.
  *
  * @receiver The exception to get Java's built-in equivalent for.
  * @return
- * - [IOException] if the receiver is a [ModifiedUtf8IOException]
- * - [EOFException] if the receiver is a [ModifiedUtf8EOFException]
- * - [UTFDataFormatException] if the receiver is a [MalformedPrimaryByteException], [MalformedSecondaryByteException],
- * or [CharacterStartedTooLateException]
+ * - [IOException] if the receiver is a [Mutf8IOException]
+ * - [EOFException] if the receiver is a [Mutf8EOFException]
+ * - [UTFDataFormatException] if the receiver is a [Mutf8MalformedPrimaryByteException], [Mutf8MalformedSecondaryByteException],
+ * or [Mutf8TruncatedCharacterException]
  */
-private fun ModifiedUtf8Exception.toBuiltInJavaException(): IOException =
+private fun Mutf8Exception.toBuiltInJavaException(): IOException =
     when (this) {
         // NOTE: `UTFDataFormatException` and `EOFException` don't have a `cause` parameters, so we just replace the
         //       `stackTrace` with the original exception's `stackTrace` manually.
 
-        is MalformedPrimaryByteException,
-        is MalformedSecondaryByteException,
-        is CharacterStartedTooLateException ->
+        is Mutf8MalformedPrimaryByteException,
+        is Mutf8MalformedSecondaryByteException,
+        is Mutf8TruncatedCharacterException ->
             (cause as? UTFDataFormatException) ?: UTFDataFormatException(message)
                 .also { it.stackTrace = (cause ?: this).stackTrace }
 
-        is ModifiedUtf8EOFException ->
+        is Mutf8EOFException ->
             (cause as? EOFException) ?: EOFException(message)
                 .also { it.stackTrace = (cause ?: this).stackTrace }
 
-        is ModifiedUtf8IOException ->
+        is Mutf8IOException ->
             (cause as? IOException) ?: IOException(message, cause ?: this)
     }
 
 /**
- * A [ModifiedUtf8ByteSource] that reads from an [InputStream].
+ * A [Mutf8Source] that reads from an [InputStream].
  */
-private class InputStreamMutf8ByteSource(private val stream: InputStream) : ModifiedUtf8ByteSource {
+private class InputStreamMutf8ByteSource(private val stream: InputStream) : Mutf8Source {
 
     override fun readBytes(amount: UShort): ByteArray {
         val array = ByteArray(size = amount.toInt())
         val bytesRead = try {
             stream.read(array)
         } catch (cause: IOException) {
-            throw ModifiedUtf8IOException("Failed to read the contents of a Modified UTF-8 string", cause)
+            throw Mutf8IOException("Failed to read the contents of a Modified UTF-8 string", cause)
         }
 
         if (bytesRead < 0)
-            throw ModifiedUtf8EOFException("Data ended before the contents of a Modified UTF-8 string")
+            throw Mutf8EOFException("Data ended before the contents of a Modified UTF-8 string")
 
         if (bytesRead < array.size)
-            throw ModifiedUtf8EOFException("Data only had $bytesRead bytes left for a Modified UTF-8 string that expected $amount bytes")
+            throw Mutf8EOFException("Data only had $bytesRead bytes left for a Modified UTF-8 string that expected $amount bytes")
 
         return array
     }
 
-    override fun readUtfLength(): UShort {
+    override fun readLength(): UShort {
         val byte1: Int
         val byte2: Int
 
@@ -167,13 +167,13 @@ private class InputStreamMutf8ByteSource(private val stream: InputStream) : Modi
             byte1 = stream.read()
             byte2 = stream.read()
         } catch (cause: EOFException) {
-            throw ModifiedUtf8EOFException("Data ended while reading the length of a Modified UTF-8 string", cause)
+            throw Mutf8EOFException("Data ended while reading the length of a Modified UTF-8 string", cause)
         } catch (cause: IOException) {
-            throw ModifiedUtf8IOException("Failed to read the length of a Modified UTF-8 string", cause)
+            throw Mutf8IOException("Failed to read the length of a Modified UTF-8 string", cause)
         }
 
         if (byte1 == -1 || byte2 == -1)
-            throw ModifiedUtf8EOFException("Data ended while reading the length of a Modified UTF-8 string")
+            throw Mutf8EOFException("Data ended while reading the length of a Modified UTF-8 string")
 
         return ((byte1 and 0xFF shl 8) or (byte2 and 0xFF)).toUShort()
     }

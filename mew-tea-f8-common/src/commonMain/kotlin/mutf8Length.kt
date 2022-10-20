@@ -1,4 +1,4 @@
-@file:JvmName("ModifiedUtf8Length")
+@file:JvmName("Mutf8Length")
 
 package me.nullicorn.mewteaf8
 
@@ -25,7 +25,7 @@ import kotlin.jvm.JvmSynthetic
  *
  * To call this from Java sources:
  * ```java
- * ModifiedUtf8Length.of(chars)
+ * Mutf8Length.of(chars)
  * ```
  *
  * @receiver The characters to determine the collective length of, in bytes.

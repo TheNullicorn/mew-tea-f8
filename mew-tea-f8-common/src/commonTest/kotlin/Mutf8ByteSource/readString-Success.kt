@@ -1,29 +1,29 @@
 @file:Suppress("PackageName")
 
-package me.nullicorn.mewteaf8.ModifiedUtfByteSource
+package me.nullicorn.mewteaf8.Mutf8ByteSource
 
 import me.nullicorn.mewteaf8.*
-import me.nullicorn.mewteaf8.internal.InternalMewTeaF8Api
+import me.nullicorn.mewteaf8.internal.InternalMutf8Api
 import kotlin.js.JsName
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-@OptIn(InternalMewTeaF8Api::class)
-class ReadModifiedUtf8SuccessfullyTests {
+@OptIn(InternalMutf8Api::class)
+class ReadStringSuccessfullyTests {
 
     @Test
     @JsName("A")
-    fun `readModifiedUtf8 should return an empty string if utfLength is 0`() {
+    fun `readString should return an empty string if utfLength is 0`() {
         val emptyString = CharArray(size = 0).concatToString()
         val emptySource = buildTestSource { }
 
 
-        assertEquals(expected = emptyString, actual = emptySource.readModifiedUtf8(utfLength = 0u))
+        assertEquals(expected = emptyString, actual = emptySource.readString(utfLength = 0u))
     }
 
     @Test
     @JsName("B")
-    fun `readModifiedUtf8 should decode a character using 1 byte when that byte's bits follow the pattern 0xxxxxxx`() {
+    fun `readString should decode a character using 1 byte when that byte's bits follow the pattern 0xxxxxxx`() {
         // We include U+0000 in this range because even though no normal writer should ever encode it using 1 byte,
         // Java's reader allows for it, so we will too.
         testSuccessfulDecodingOfRange('\u0000'..'\u007F', writeChar = { char ->
@@ -33,7 +33,7 @@ class ReadModifiedUtf8SuccessfullyTests {
 
     @Test
     @JsName("C")
-    fun `readModifiedUtf8 should decode a character using 2 bytes when the first byte's bits follow the pattern 110xxxxx`() {
+    fun `readString should decode a character using 2 bytes when the first byte's bits follow the pattern 110xxxxx`() {
         // We include (U+0001 .. U+007F) in this range because even though no normal writer should ever encode those
         // using 2 bytes, Java's reader allows for it, so we will too.
         testSuccessfulDecodingOfRange('\u0000'..'\u07FF', writeChar = { char ->
@@ -44,7 +44,7 @@ class ReadModifiedUtf8SuccessfullyTests {
 
     @Test
     @JsName("D")
-    fun `readModifiedUtf8 should decode a character using 3 bytes when the first byte's bits follow the pattern 1110xxxx`() {
+    fun `readString should decode a character using 3 bytes when the first byte's bits follow the pattern 1110xxxx`() {
         // We include (U+0000 .. U+07FF) in this range because even though no normal writer should ever encode those
         // using 3 bytes, Java's reader allows for it, so we will too. Then, because (U+0800 .. U+FFFF) is such a big
         // range (60k+ chars), we randomly select 1,000 of those to test.
@@ -82,7 +82,7 @@ class ReadModifiedUtf8SuccessfullyTests {
             val source = buildTestSource {
                 writeChar(char)
             }
-            assertEquals(expected = string, actual = source.readModifiedUtf8(utfLength = source.size.toUShort()))
+            assertEquals(expected = string, actual = source.readString(utfLength = source.size.toUShort()))
         }
 
         // Put all the characters into one big string and make sure that it is decoded correctly.
@@ -91,6 +91,6 @@ class ReadModifiedUtf8SuccessfullyTests {
             for (char in string)
                 writeChar(char)
         }
-        assertEquals(expected = string, actual = source.readModifiedUtf8(utfLength = source.size.toUShort()))
+        assertEquals(expected = string, actual = source.readString(utfLength = source.size.toUShort()))
     }
 }

@@ -1,10 +1,10 @@
-public final class me/nullicorn/mewteaf8/ModifiedUtf8Length {
-	public static final synthetic fun of (Ljava/lang/CharSequence;)J
-}
-
-public final class me/nullicorn/mewteaf8/ModifiedUtf8Streams {
+public final class me/nullicorn/mewteaf8/Mutf8InputStreams {
 	public static final fun readContentsFrom (Ljava/io/InputStream;S)Ljava/lang/String;
 	public static final fun readLengthFrom (Ljava/io/InputStream;)S
 	public static final fun readStringFrom (Ljava/io/InputStream;)Ljava/lang/String;
+}
+
+public final class me/nullicorn/mewteaf8/Mutf8Length {
+	public static final synthetic fun of (Ljava/lang/CharSequence;)J
 }
 

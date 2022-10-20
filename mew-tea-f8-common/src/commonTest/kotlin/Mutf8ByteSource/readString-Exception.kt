@@ -1,6 +1,6 @@
 @file:Suppress("PackageName")
 
-package me.nullicorn.mewteaf8.ModifiedUtfByteSource
+package me.nullicorn.mewteaf8.Mutf8ByteSource
 
 import me.nullicorn.mewteaf8.*
 import me.nullicorn.mewteaf8.internal.*
@@ -8,12 +8,12 @@ import kotlin.js.JsName
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 
-@OptIn(InternalMewTeaF8Api::class)
-class ReadModifiedUtf8ExceptionsTests {
+@OptIn(InternalMutf8Api::class)
+class ReadStringExceptionsTests {
 
     @Test
     @JsName("A")
-    fun `readModifiedUtf8 should propogate ModifiedUTF8EOFExceptions thrown by readBytes`() {
+    fun `readString should propogate Mutf8EOFExceptions thrown by readBytes`() {
         for (totalBytes in 0..20)
             for (extraBytesToTryReading in 1..5) {
                 val source = buildTestSource {
@@ -22,7 +22,7 @@ class ReadModifiedUtf8ExceptionsTests {
                 }
 
                 // Read more byte that we actually included, which should cause the exception to be thrown.
-                assertFailsWith<ModifiedUtf8EOFException> {
+                assertFailsWith<Mutf8EOFException> {
                     source.readBytes(amount = (totalBytes + extraBytesToTryReading).toUShort())
                 }
             }
@@ -30,26 +30,26 @@ class ReadModifiedUtf8ExceptionsTests {
 
     @Test
     @JsName("B")
-    fun `readModifiedUtf8 should propogate ModifiedUtf8IOExceptions thrown by readBytes`() {
-        val source = object : ModifiedUtf8ByteSource {
+    fun `readString should propogate Mutf8IOExceptions thrown by readBytes`() {
+        val source = object : Mutf8Source {
 
             override fun readBytes(amount: UShort): ByteArray {
-                throw ModifiedUtf8IOException("Test; this should NOT be caught by readModifiedUtf8()")
+                throw Mutf8IOException("Test; this should NOT be caught by readString()")
             }
 
-            override fun readUtfLength(): UShort {
+            override fun readLength(): UShort {
                 throw UnsupportedOperationException("This method is not being tested")
             }
         }
 
-        assertFailsWith<ModifiedUtf8IOException> {
-            source.readModifiedUtf8(utfLength = 0u)
+        assertFailsWith<Mutf8IOException> {
+            source.readString(utfLength = 0u)
         }
     }
 
     @Test
     @JsName("C")
-    fun `readModifiedUtf8 should throw CharacterStartedTooLateException if a 2-byte character is started on the last byte`() {
+    fun `readString should throw CharacterStartedTooLateException if a 2-byte character is started on the last byte`() {
         for (char in doubleByteSamples)
             for (include2ndByteOutOfBounds in setOf(false, true)) {
                 val source = buildTestSource {
@@ -61,15 +61,15 @@ class ReadModifiedUtf8ExceptionsTests {
                         add2ndOf2Bytes(char)
                 }
 
-                assertFailsWith<CharacterStartedTooLateException> {
-                    source.readModifiedUtf8(utfLength = 1u)
+                assertFailsWith<Mutf8TruncatedCharacterException> {
+                    source.readString(utfLength = 1u)
                 }
             }
     }
 
     @Test
     @JsName("D")
-    fun `readModifiedUtf8 should throw CharacterStartedTooLateException if a 3-byte character is started on the last or second-to-last byte`() {
+    fun `readString should throw CharacterStartedTooLateException if a 3-byte character is started on the last or second-to-last byte`() {
         // For each sample character, alternate between omitting only the 3rd byte & omitting both the 2nd and 3rd. For
         // each of those, also include a test where the missing bytes are technically there, but are outside the limit
         // specified by `utfLength`, that way we can be sure that the function doesn't try to reach for bytes outside
@@ -92,22 +92,22 @@ class ReadModifiedUtf8ExceptionsTests {
                     // per character, in those cases.
                     val utfLength = if (includeOtherBytesOutOfBounds) 3 - bytesToOmit else source.size
 
-                    assertFailsWith<CharacterStartedTooLateException> {
-                        source.readModifiedUtf8(utfLength = utfLength.toUShort())
+                    assertFailsWith<Mutf8TruncatedCharacterException> {
+                        source.readString(utfLength = utfLength.toUShort())
                     }
                 }
     }
 
     @Test
     @JsName("E")
-    fun `readModifiedUtf8 should throw MalformedPrimaryByteException if a character's first byte has bits that match the pattern 1111xxxx`() {
+    fun `readString should throw MalformedPrimaryByteException if a character's first byte has bits that match the pattern 1111xxxx`() {
         for (char in singleByteSamples) {
             val source = buildTestSource {
                 // Set all 4 most-significant bits in the byte.
                 add((char.code and 0x0F or 0xF0).toByte())
             }
-            assertFailsWith<MalformedPrimaryByteException> {
-                source.readModifiedUtf8(utfLength = 1u)
+            assertFailsWith<Mutf8MalformedPrimaryByteException> {
+                source.readString(utfLength = 1u)
             }
         }
 
@@ -117,8 +117,8 @@ class ReadModifiedUtf8ExceptionsTests {
                 add((char.code shr 6 and 0x0F or 0xF0).toByte())
                 add2ndOf2Bytes(char)
             }
-            assertFailsWith<MalformedPrimaryByteException> {
-                source.readModifiedUtf8(utfLength = 2u)
+            assertFailsWith<Mutf8MalformedPrimaryByteException> {
+                source.readString(utfLength = 2u)
             }
         }
 
@@ -129,15 +129,15 @@ class ReadModifiedUtf8ExceptionsTests {
                 add2ndOf3Bytes(char)
                 add3rdOf3Bytes(char)
             }
-            assertFailsWith<MalformedPrimaryByteException> {
-                source.readModifiedUtf8(utfLength = 3u)
+            assertFailsWith<Mutf8MalformedPrimaryByteException> {
+                source.readString(utfLength = 3u)
             }
         }
     }
 
     @Test
     @JsName("F")
-    fun `readModifiedUtf8 should throw MalformedSecondaryByteException if the second or third bytes of a character don't have bits matching the pattern 10xxxxxx`() {
+    fun `readString should throw MalformedSecondaryByteException if the second or third bytes of a character don't have bits matching the pattern 10xxxxxx`() {
         // All combos of the 2 most-significant bits that aren't allowed on secondary bytes.
         val badBitPairs = (0b00..0b11) - 0b10
 
@@ -147,8 +147,8 @@ class ReadModifiedUtf8ExceptionsTests {
                     add1stOf2Bytes(char)
                     add((char.code and 0x3F or (badBitPair shl 6)).toByte())
                 }
-                assertFailsWith<MalformedSecondaryByteException> {
-                    source.readModifiedUtf8(utfLength = 2u)
+                assertFailsWith<Mutf8MalformedSecondaryByteException> {
+                    source.readString(utfLength = 2u)
                 }
             }
 
@@ -166,8 +166,8 @@ class ReadModifiedUtf8ExceptionsTests {
                             add((char.code and 0x3F or (badBitPair shl 6)).toByte())
                         }
                     }
-                    assertFailsWith<MalformedSecondaryByteException> {
-                        source.readModifiedUtf8(utfLength = 3u)
+                    assertFailsWith<Mutf8MalformedSecondaryByteException> {
+                        source.readString(utfLength = 3u)
                     }
                 }
     }
