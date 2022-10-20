@@ -41,17 +41,22 @@ interface Mutf8Sink {
     /**
      * Writes a Modified UTF-8 string to the sink.
      *
+     * This does not write the [mutf8Length] of the [string]. That should be done separately using [writeLength].
+     *
      * @param[string] The characters to write to the sink.
      * @param[bytesPerWrite] The maximum number of bytes to write to the sink at once when writing in bulk. This must
      * be at least `1`.
      *
      * @throws[IllegalArgumentException] if [bytesPerWrite] is less than `1`.
+     * @throws[IllegalArgumentException] if the [mutf8Length] of the string exceeds [UShort.MAX_VALUE].
      * @throws[Mutf8IOException] if an I/O related issue occurs while trying to write the string's bytes.
      */
     fun writeString(string: String, bytesPerWrite: Int) {
         require(bytesPerWrite >= 1) { "bytesPerWrite must be at least 1" }
 
         val bytesNeeded = string.mutf8Length
+        require(bytesNeeded <= UShort.MAX_VALUE.toLong()) { "String is too long to be encoded as Modified UTF-8 data; it would take up $bytesNeeded bytes, but the maximum allowed is ${UShort.MAX_VALUE}" }
+
         val buffer = ByteArray(size = min(bytesNeeded, bytesPerWrite.toLong()).toInt())
         var b = 0
 

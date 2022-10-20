@@ -201,6 +201,7 @@ fun OutputStream.writeMutf8Length(mutf8Length: UShort) = try {
 * [writeMutf8String] can be used instead. That way the caller doesn't have to manually
 * [write the string's length][writeMutf8Length].
 *
+* @throws[IllegalArgumentException] if the string's [mutf8Length] exceeds [UShort.MAX_VALUE].
 * @throws[IOException] if an I/O issue occurs while trying to write the string.
 *
 * @see[writeMutf8Length]
@@ -211,7 +212,6 @@ fun OutputStream.writeMutf8Length(mutf8Length: UShort) = try {
 @Throws(IllegalArgumentException::class, IOException::class)
 @OptIn(InternalMutf8Api::class)
 fun OutputStream.writeMutf8Contents(string: String, bytesPerWrite: Int = 1024) = try {
-    require(bytesPerWrite >= 1) { "bytesPerWrite must be at least 1" }
     OutputStreamMutf8Sink(this).writeString(string, bytesPerWrite)
 } catch (cause: Mutf8Exception) {
     throw cause.toBuiltInJavaException()
