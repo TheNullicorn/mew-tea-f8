@@ -1,25 +1,10 @@
-# IGNORE (Everything by Default)
-*
-!/*
+# IGNORE (Kotlin)
+**/kotlin-js-store/
 
-# KEEP (License)
-!/LICENSE.txt
+# IGNORE (Gradle)
+**/build/
+/.gradle/
 
-# KEEP (Gradle Subprojects)
-!mew-tea-f8-*/**
-
-# KEEP (Gradle Configuration)
-!build.gradle.kts
-!settings.gradle.kts
-!gradle.properties
-
-# KEEP (Gradle Wrapper)
-!gradle/
-!gradlew
-!gradlew.bat
-
-# KEEP (This File)
-!/.gitignore
-
-# IGNORE (Gradle Builds)
-**/build
+# IGNORE (JetBrains IDEs)
+/.idea/
+/.fleet/
