@@ -2,7 +2,7 @@ package me.nullicorn.mewteaf8
 
 import kotlin.random.Random
 
-internal fun createReproducableRandom() = Random(seed = "mew-tea-f8".hashCode())
+fun createReproducableRandom() = Random(seed = "mew-tea-f8".hashCode())
 
 internal fun MutableList<Byte>.add1stOf1Bytes(char: Char) = add((char.code and 0x7F).toByte())
 
