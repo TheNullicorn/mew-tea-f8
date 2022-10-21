@@ -51,7 +51,7 @@ interface Mutf8Sink {
      * @throws[IllegalArgumentException] if the [mutf8Length] of the string exceeds [UShort.MAX_VALUE].
      * @throws[Mutf8IOException] if an I/O related issue occurs while trying to write the string's bytes.
      */
-    fun writeString(string: String, bytesPerWrite: Int) {
+    fun writeString(string: String, bytesPerWrite: Int = 1024) {
         require(bytesPerWrite >= 1) { "bytesPerWrite must be at least 1" }
 
         val bytesNeeded = string.mutf8Length
