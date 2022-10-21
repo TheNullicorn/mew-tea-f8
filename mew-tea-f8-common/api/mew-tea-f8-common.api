@@ -2,6 +2,13 @@ public final class me/nullicorn/mewteaf8/Mutf8InputStreams {
 	public static final fun readContentsFrom (Ljava/io/InputStream;S)Ljava/lang/String;
 	public static final fun readLengthFrom (Ljava/io/InputStream;)S
 	public static final fun readStringFrom (Ljava/io/InputStream;)Ljava/lang/String;
+	public static final fun writeContentsTo (Ljava/io/OutputStream;Ljava/lang/String;)V
+	public static final fun writeContentsTo (Ljava/io/OutputStream;Ljava/lang/String;I)V
+	public static synthetic fun writeContentsTo$default (Ljava/io/OutputStream;Ljava/lang/String;IILjava/lang/Object;)V
+	public static final fun writeLengthTo (Ljava/io/OutputStream;S)V
+	public static final fun writeStringTo (Ljava/io/OutputStream;Ljava/lang/String;)V
+	public static final fun writeStringTo (Ljava/io/OutputStream;Ljava/lang/String;I)V
+	public static synthetic fun writeStringTo$default (Ljava/io/OutputStream;Ljava/lang/String;IILjava/lang/Object;)V
 }
 
 public final class me/nullicorn/mewteaf8/Mutf8Length {
