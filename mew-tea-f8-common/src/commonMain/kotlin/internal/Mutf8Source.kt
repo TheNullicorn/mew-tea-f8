@@ -54,12 +54,16 @@ interface Mutf8Source {
      * the second byte doesn't actually exist.
      * @throws[Mutf8TruncatedCharacterException] if a 3-byte character starts on the last or second-to-last bytes of
      * the string, meaning the second and/or third bytes don't actually exist.
-     * @throws[Mutf8MalformedPrimaryByteException] if the first byte of a character has all 4 of its most-significant bits
-     * set, which is not expected of any byte in a Modified UTF-8 string. In other words, the bytes bits match the
+     * @throws[Mutf8MalformedPrimaryByteException] if the first byte of a character has all 4 of its most-significant
+     * bits set, which is not expected of any byte in a Modified UTF-8 string. In other words, the bytes bits match the
      * pattern `1111 xxxx`, where each `x` can be either `1` or `0`.
-     * @throws[Mutf8MalformedSecondaryByteException] if the second or third bytes of a 2-byte or 3-byte character don't have
-     * their most-significant bit set (`1`), and their second-most-significant bit unset (`0`). In other words, the
-     * byte does not match the expected pattern, `10xx xxxx`, where each `x` can be either `1` or `0`.
+     * @throws[Mutf8MalformedPrimaryByteException] if the first byte of a character has its most-significant bit set
+     * (`1`) and their second-most-significant bit unset (`0`). In other words, the bytes matches the pattern
+     * `10xx xxxx` (where each `x` can be either `1` or `0`), which is only expected for the 2nd and 3rd bytes of
+     * multi-byte characters.
+     * @throws[Mutf8MalformedSecondaryByteException] if the second or third bytes of a 2-byte or 3-byte character don't
+     * have their most-significant bit set (`1`), and their second-most-significant bit unset (`0`). In other words,
+     * the byte does not match the expected pattern, `10xx xxxx`, where each `x` can be either `1` or `0`.
      */
     fun readString(utfLength: UShort): String {
         val utfLengthInt = utfLength.toInt()
@@ -76,7 +80,8 @@ interface Mutf8Source {
         var b = 0
         var c = 0
 
-        // Chars can use up to 3 bytes, which are held in these variables until their bits are combined into a single Char.
+        // Chars can use up to 3 bytes, which are held in these variables until their bits are combined into a single
+        // Char.
         var byte1: Int
         var byte2: Int
         var byte3: Int
@@ -122,8 +127,8 @@ interface Mutf8Source {
                 continue
             }
 
-            // The first byte matches the only pattern left, `1111xxxx`, which is not valid, so we consider the string
-            // to be malformed.
+            // The first byte matches either the pattern `1111xxxx`, which is not valid for any Modified UTF-8 byte,
+            // or the pattern `10xxxxxx`, which is only valid for the 2nd or 3rd bytes of characters.
             throw Mutf8MalformedPrimaryByteException(byte1)
         }
 
@@ -145,9 +150,9 @@ interface Mutf8Source {
  * This is only used in the message of an exception, if one is thrown.
  * @return the value of the byte at the given [index] in the array.
  *
- * @throws[Mutf8MalformedSecondaryByteException] if the byte doesn't have its most-significant bit set (`1`), and its
- * second-most-significant bit unset (`0`). In other words, the byte does not match the expected pattern, `10xx xxxx`,
- * where each `x` can be either `1` or `0`.
+ * @throws[Mutf8MalformedSecondaryByteException] if the second or third bytes of a 2-byte or 3-byte character don't
+ * have their most-significant bit set (`1`), and their second-most-significant bit unset (`0`). In other words,
+ * the byte does not match the expected pattern, `10xx xxxx`, where each `x` can be either `1` or `0`.
  */
 @InternalMutf8Api
 private inline fun ByteArray.getSecondaryByteOfChar(
