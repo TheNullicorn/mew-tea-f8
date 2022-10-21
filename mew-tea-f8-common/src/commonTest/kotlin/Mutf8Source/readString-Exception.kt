@@ -50,7 +50,7 @@ class ReadStringExceptionsTests {
     @Test
     @JsName("C")
     fun `readString should throw CharacterStartedTooLateException if a 2-byte character is started on the last byte`() {
-        for (char in doubleByteSamples)
+        for (char in doubleByteInputSamples)
             for (include2ndByteOutOfBounds in setOf(false, true)) {
                 val source = buildTestSource {
                     add1stOf2Bytes(char)
@@ -74,7 +74,7 @@ class ReadStringExceptionsTests {
         // each of those, also include a test where the missing bytes are technically there, but are outside the limit
         // specified by `utfLength`, that way we can be sure that the function doesn't try to reach for bytes outside
         // the `utfLength` to complete a character.
-        for (char in tripleByteSamples)
+        for (char in tripleByteInputSamples)
             for (bytesToOmit in setOf(1, 2))
                 for (includeOtherBytesOutOfBounds in setOf(false, true)) {
                     val source = buildTestSource {
@@ -101,7 +101,7 @@ class ReadStringExceptionsTests {
     @Test
     @JsName("E")
     fun `readString should throw MalformedPrimaryByteException if a character's first byte has bits that match the pattern 1111xxxx`() {
-        for (char in singleByteSamples) {
+        for (char in singleByteInputSamples) {
             val source = buildTestSource {
                 // Set all 4 most-significant bits in the byte.
                 add((char.code and 0x0F or 0xF0).toByte())
@@ -111,7 +111,7 @@ class ReadStringExceptionsTests {
             }
         }
 
-        for (char in doubleByteSamples) {
+        for (char in doubleByteInputSamples) {
             val source = buildTestSource {
                 // Set all 4 most-significant bits in the first byte, but write the second one normally.
                 add((char.code shr 6 and 0x0F or 0xF0).toByte())
@@ -122,7 +122,7 @@ class ReadStringExceptionsTests {
             }
         }
 
-        for (char in tripleByteSamples) {
+        for (char in tripleByteInputSamples) {
             val source = buildTestSource {
                 // Set all 4 most-significant bits in the first byte, but write the second and third ones normally.
                 add((char.code shr 12 and 0x0F or 0xF0).toByte())
@@ -141,7 +141,7 @@ class ReadStringExceptionsTests {
         // All combos of the 2 most-significant bits that aren't allowed on secondary bytes.
         val badBitPairs = (0b00..0b11) - 0b10
 
-        for (char in doubleByteSamples)
+        for (char in doubleByteInputSamples)
             for (badBitPair in badBitPairs) {
                 val source = buildTestSource {
                     add1stOf2Bytes(char)
@@ -152,7 +152,7 @@ class ReadStringExceptionsTests {
                 }
             }
 
-        for (char in tripleByteSamples)
+        for (char in tripleByteInputSamples)
             for (badByte in setOf(2, 3))
                 for (badBitPair in badBitPairs) {
                     val source = buildTestSource {

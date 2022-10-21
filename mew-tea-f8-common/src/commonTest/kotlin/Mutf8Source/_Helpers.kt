@@ -7,9 +7,9 @@ import me.nullicorn.mewteaf8.internal.InternalMutf8Api
 import me.nullicorn.mewteaf8.internal.Mutf8Source
 import me.nullicorn.mewteaf8.internal.Mutf8EOFException
 
-internal val singleByteSamples = '\u0000'..'\u007F'
-internal val doubleByteSamples = '\u0000'..'\u07FF'
-internal val tripleByteSamples = ('\u0000'..'\u07FF') + buildSet {
+internal val singleByteInputSamples = '\u0000'..'\u007F'
+internal val doubleByteInputSamples = '\u0000'..'\u07FF'
+internal val tripleByteInputSamples = ('\u0000'..'\u07FF') + buildSet {
     add('\u0800')
     add('\uFFFF')
 
