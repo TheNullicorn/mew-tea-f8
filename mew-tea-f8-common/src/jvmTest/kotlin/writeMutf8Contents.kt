@@ -4,9 +4,11 @@ import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
 import java.io.IOException
 import java.io.OutputStream
+import java.lang.AssertionError
 import java.lang.IllegalArgumentException
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
+import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 class WriteMutf8ContentsTests {
@@ -54,6 +56,51 @@ class WriteMutf8ContentsTests {
             }.toByteArray().let { it.copyOfRange(fromIndex = 2, toIndex = it.size) }
 
             assertContentEquals(expectedEncoded, actualEncoded)
+        }
+    }
+
+    @Test
+    fun `writeMutf8Contents should use bytesPerWrite as the number of bytes written to the OutputStream at a time unless it is the last write`() {
+        val string = "A".repeat(n = UShort.MAX_VALUE.toInt())
+
+        for (bytesPerWrite in 1..1024 step 13) {
+            var totalWrites = 0
+            var bytesInCurrentWrite = 0
+
+            val stream = object : OutputStream() {
+                private fun checkLastWrite() {
+                    // Only check the previous write's size if there was one, which there wasn't if `totalWrites` is 0.
+                    if (totalWrites > 0 && bytesInCurrentWrite != bytesPerWrite)
+                        throw AssertionError("In a non-final write, $bytesInCurrentWrite bytes were written at once instead of the $bytesPerWrite expected")
+                }
+
+                override fun write(b: Int) {
+                    checkLastWrite()
+                    totalWrites++
+                    bytesInCurrentWrite = 1
+                }
+
+                override fun write(b: ByteArray) {
+                    checkLastWrite()
+                    totalWrites++
+                    bytesInCurrentWrite = b.size
+                }
+
+                override fun write(b: ByteArray, off: Int, len: Int) {
+                    checkLastWrite()
+                    totalWrites++
+                    bytesInCurrentWrite = len
+                }
+            }
+
+            // Write the string, which could trigger the assertions we have in the `OutputStream`.
+            stream.writeMutf8Contents(string, bytesPerWrite)
+
+            // Ensure the last group is exactly as big as it should be, given the amount & size of writes before it.
+            assertEquals(
+                expected = string.length - (bytesPerWrite * (totalWrites - 1)),
+                actual = bytesInCurrentWrite
+            )
         }
     }
 }
