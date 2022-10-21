@@ -68,6 +68,10 @@ interface Mutf8Source {
     fun readString(utfLength: UShort): String {
         val utfLengthInt = utfLength.toInt()
 
+        // The call to `readBytes` below may cause issues if we try to read `0` bytes, so we can short-circuit here
+        // because we know the string will be empty if there's no bytes anyway.
+        if (utfLengthInt == 0) return ""
+
         // Read all the string's bytes at once.
         val bytes = readBytes(amount = utfLength)
         if (bytes.size != utfLengthInt)

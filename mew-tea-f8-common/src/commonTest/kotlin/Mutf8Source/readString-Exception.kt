@@ -43,7 +43,7 @@ class ReadStringExceptionsTests {
         }
 
         assertFailsWith<Mutf8IOException> {
-            source.readString(utfLength = 0u)
+            source.readString(utfLength = 1u)
         }
     }
 
