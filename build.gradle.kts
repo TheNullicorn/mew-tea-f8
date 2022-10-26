@@ -2,9 +2,7 @@ import kotlinx.validation.ApiValidationExtension
 import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.jetbrains.gradle.ext.packagePrefix
 import org.jetbrains.gradle.ext.settings
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetDsl
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
@@ -29,62 +27,6 @@ subprojects {
 
     repositories {
         mavenCentral()
-    }
-
-    // Configures the same multiplatform targets for all subprojects.
-    @Suppress("UNUSED_VARIABLE")
-    configure<KotlinMultiplatformExtension> {
-        jvm {
-            compilations.all {
-                kotlinOptions.jvmTarget = "1.8"
-            }
-            withJava()
-            testRuns["test"].executionTask.configure {
-                useJUnitPlatform()
-            }
-        }
-
-        js(BOTH) {
-            // Target both client & server-side JavaScript.
-            val jsTargets: List<(KotlinJsSubTargetDsl.() -> Unit) -> Unit> =
-                listOf(::nodejs, ::browser)
-
-            // Register & configure each target listed above.
-            for (jsTarget in jsTargets) {
-                jsTarget {
-                    testTask {
-                        useMocha {
-                            // Allow longer tests to run up to 10 seconds before failing.
-                            timeout = "0s"
-                        }
-                    }
-                }
-            }
-        }
-
-        val hostOs = System.getProperty("os.name")
-        val isMingwX64 = hostOs.startsWith("Windows")
-        val nativeTarget = when {
-            hostOs == "Mac OS X" -> macosX64("native")
-            hostOs == "Linux" -> linuxX64("native")
-            isMingwX64 -> mingwX64("native")
-            else -> throw GradleException("Host OS is not supported in Kotlin/Native.")
-        }
-
-        sourceSets {
-            val commonMain by getting
-            val commonTest by getting {
-                dependencies {
-                    implementation(kotlin("test"))
-                }
-            }
-            val jvmMain by getting
-            val jvmTest by getting
-            val jsMain by getting
-            val jsTest by getting
-            val nativeMain by getting
-            val nativeTest by getting
-        }
     }
 
     configure<IdeaModel> {
