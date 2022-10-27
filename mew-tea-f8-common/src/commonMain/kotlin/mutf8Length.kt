@@ -150,10 +150,6 @@ private fun checkStartAndEndIndices(startIndex: Int, endIndex: Int, lengthInChar
     require(lengthInChars >= 0) { "length must be at least 0, not $lengthInChars" }
 
     require(startIndex >= 0) { "startIndex must be at least 0, not $startIndex" }
-    require(startIndex <= lengthInChars - 1) { "startIndex, $startIndex, must not exceed lastIndex, ${lengthInChars - 1}" }
-
-    require(endIndex >= 0) { "endIndex must be at least 0, not $endIndex" }
     require(endIndex <= lengthInChars) { "endIndex, $endIndex, must not exceed length, $lengthInChars" }
-
     require(startIndex <= endIndex) { "startIndex, $startIndex, must not exceed endIndex, $endIndex" }
 }
