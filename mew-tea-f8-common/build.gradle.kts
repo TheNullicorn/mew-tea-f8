@@ -1,5 +1,11 @@
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetDsl
 
+@Suppress("DSL_SCOPE_VIOLATION")
+plugins {
+    alias(libs.plugins.kotlin.benchmark)
+    alias(libs.plugins.kotlin.allopen)
+}
+
 repositories {
     mavenCentral()
 }
@@ -8,8 +14,18 @@ repositories {
 kotlin {
     // Target Java 8.
     jvm {
-        compilations.all {
-            kotlinOptions.jvmTarget = "1.8"
+        compilations {
+            val main by getting
+            val benchmark by creating {
+                defaultSourceSet {
+                    dependencies {
+                        implementation(main.compileDependencyFiles + main.output.classesDirs)
+                    }
+                }
+            }
+            all {
+                kotlinOptions.jvmTarget = "1.8"
+            }
         }
     }
 
@@ -64,5 +80,22 @@ kotlin {
             dependsOn(nonJvmMain)
         }
         val nativeTest by getting
+
+        val jvmBenchmark by getting {
+            dependsOn(jvmMain)
+            dependencies {
+                implementation(libs.kotlin.benchmark)
+            }
+        }
     }
+}
+
+benchmark {
+    targets {
+        register("jvmBenchmark")
+    }
+}
+
+allOpen {
+    annotation("org.openjdk.jmh.annotations.State")
 }

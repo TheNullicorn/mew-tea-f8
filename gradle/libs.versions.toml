@@ -1,10 +1,16 @@
 [versions]
 kotlin = "1.7.20"
+kotlin-benchmark = "0.4.4"
 okio = "1.3.0"
 intellij-settings = "1.1.6"
 binary-compatibility = "0.11.1"
 
 [plugins]
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlin-benchmark = { id = "org.jetbrains.kotlinx.benchmark", version.ref = "kotlin-benchmark" }
+kotlin-allopen = { id = "org.jetbrains.kotlin.plugin.allopen", version.ref = "kotlin" }
 intellij-settings = { id = "org.jetbrains.gradle.plugin.idea-ext", version.ref = "intellij-settings" }
 binary-compatibility = { id = 'org.jetbrains.kotlinx.binary-compatibility-validator', version.ref = "binary-compatibility" }
+
+[libraries]
+kotlin-benchmark = { module = "org.jetbrains.kotlinx:kotlinx-benchmark-runtime", version.ref = "kotlin-benchmark" }

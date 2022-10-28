@@ -131,16 +131,15 @@ private inline fun calculateMutf8Length(lengthInChars: Int, hasNext: () -> Boole
     require(lengthInChars > 0) { "length cannot be a negative number: $lengthInChars" }
 
     var lengthInBytes = lengthInChars.toLong()
-    while (hasNext()) {
-        val char = nextChar()
+    while (hasNext())
+        when (nextChar().code.toShort().countLeadingZeroBits()) {
+            // Characters in the range `'\u0080' .. '\u07FF'` add `2` to the sum
+            // The character `'\u0000'` adds `2` to the sum
+            16, 8, 7, 6, 5 -> lengthInBytes++
 
-        // "Characters in the range `'\u0800' .. '\uFFFF'` add `3` to the sum" (see KDoc comment)
-        if (char >= '\u0800') lengthInBytes += 2
-
-        // "Characters in the range `'\u0080' .. '\u07FF'` add `2` to the sum" (see KDoc comment)
-        // "The character `'\u0000'` adds `2` to the sum"                      (see KDoc comment)
-        else if (char >= '\u0080') lengthInBytes++
-    }
+            // Characters in the range `'\u0800' .. '\uFFFF'` add `3` to the sum
+            4, 3, 2, 1, 0 -> lengthInBytes += 2
+        }
     return lengthInBytes
 }
 
