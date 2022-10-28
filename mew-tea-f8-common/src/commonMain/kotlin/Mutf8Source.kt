@@ -3,7 +3,7 @@ package me.nullicorn.mewteaf8
 /**
  * Something that Modified UTF-8 data can be read from.
  *
- * For convenience in various scenarios, said data can be accessed in several different ways:
+ * For convenience in various scenarios, said data can be accessed in several ways:
  * - [readToAppendable]: The characters are added to an existing [Appendable], such as a [StringBuilder]
  * - [readToString]: The characters are read and returned as a [String]
  * - [readToArray]: The characters are read and returned as a [CharArray]
@@ -26,7 +26,7 @@ abstract class Mutf8Source {
      * @throws[EOFException] if there are fewer bytes left in the source than expected by the [amount].
      * @throws[IOException] if the underlying source of bytes cannot be accessed.
      */
-    protected abstract fun readBytes(amount: UShort): ByteArray
+    protected abstract fun readBytes(amount: Int): ByteArray
 
     /**
      * Reads a Modified UTF-8 string from the source and [appends][Appendable.append] each of its characters, in order,
@@ -35,11 +35,14 @@ abstract class Mutf8Source {
      * This method does not read the 2-byte "UTF length" that comes before standard Modified UTF-8 strings. That must be
      * read separately (if applicable) and passed to this method via the [mutf8Length] parameter.
      *
-     * @param[mutf8Length] The number of bytes used to encode the string.
+     * @param[mutf8Length] The number of bytes used to encode the string. This must be at least `0` and at most
+     * `65535` ([UShort.MAX_VALUE]).
      *
      * Unless an [EOFException] is thrown, this is exactly the number of bytes that are [read][readBytes] by this
      * method.
      *
+     * @throws[IllegalArgumentException] if [mutf8Length] is negative.
+     * @throws[IllegalArgumentException] if [mutf8Length] exceeds [UShort.MAX_VALUE].
      * @throws[EOFException] if there are fewer bytes left in the source than expected by the [mutf8Length].
      * @throws[IOException] if the underlying source of bytes cannot be accessed.
      * @throws[IOException] if [readBytes] returns *more* bytes than expected by the [mutf8Length].
@@ -54,8 +57,8 @@ abstract class Mutf8Source {
      * second-most-significant bit unset (`0`), which is only expected for the second and third bytes of characters. In
      * other words, the byte's bits follow the pattern `10xx xxxx`, where each `x` can be either a `1` or `0`.
      */
-    fun readToAppendable(mutf8Length: UShort, destination: Appendable) {
-        if (mutf8Length.toInt() == 0) return
+    fun readToAppendable(mutf8Length: Int, destination: Appendable) {
+        if (mutf8Length == 0) return
 
         read(mutf8Length,
             begin = {},
@@ -74,7 +77,8 @@ abstract class Mutf8Source {
      * All indices in the returned array are populated by a character that was read from the source. There is no unused
      * space at the beginning, end, or anywhere in the middle of the array.
      *
-     * @param[mutf8Length] The number of bytes used to encode the string.
+     * @param[mutf8Length] The number of bytes used to encode the string. This must be at least `0` and at most
+     * `65535` ([UShort.MAX_VALUE]).
      *
      * Unless an [EOFException] is thrown, this is exactly the number of bytes that are [read][readBytes] by this
      * method.
@@ -83,6 +87,8 @@ abstract class Mutf8Source {
      * - will only be `0` if [mutf8Length] is also `0`
      * - will never be `0` if [mutf8Length] is not `0` either
      *
+     * @throws[IllegalArgumentException] if [mutf8Length] is negative.
+     * @throws[IllegalArgumentException] if [mutf8Length] exceeds [UShort.MAX_VALUE].
      * @throws[EOFException] if there are fewer bytes left in the source than expected by the [mutf8Length].
      * @throws[IOException] if the underlying source of bytes cannot be accessed.
      * @throws[IOException] if [readBytes] returns *more* bytes than expected by the [mutf8Length].
@@ -97,14 +103,14 @@ abstract class Mutf8Source {
      * second-most-significant bit unset (`0`), which is only expected for the second and third bytes of characters. In
      * other words, the byte's bits follow the pattern `10xx xxxx`, where each `x` can be either a `1` or `0`.
      */
-    fun readToArray(mutf8Length: UShort): CharArray {
-        if (mutf8Length.toInt() == 0) return EMPTY_CHAR_ARRAY
+    fun readToArray(mutf8Length: Int): CharArray {
+        if (mutf8Length == 0) return EMPTY_CHAR_ARRAY
 
         lateinit var chars: CharArray
         var c = 0
 
         read(mutf8Length,
-            begin = { chars = CharArray(mutf8Length.toInt()) },
+            begin = { chars = CharArray(mutf8Length) },
             consume = { char ->
                 chars[c++] = char
             })
@@ -119,7 +125,8 @@ abstract class Mutf8Source {
      * This method does not read the 2-byte "UTF length" that comes before standard Modified UTF-8 strings. That must be
      * read separately (if applicable) and passed to this method via the [mutf8Length] parameter.
      *
-     * @param[mutf8Length] The number of bytes used to encode the string.
+     * @param[mutf8Length] The number of bytes used to encode the string. This must be at least `0` and at most
+     * `65535` ([UShort.MAX_VALUE]).
      *
      * Unless an [EOFException] is thrown, this is exactly the number of bytes that are [read][readBytes] by this
      * method.
@@ -128,6 +135,8 @@ abstract class Mutf8Source {
      * - will only be `0` if [mutf8Length] is also `0`
      * - will never be `0` if [mutf8Length] is not `0` either
      *
+     * @throws[IllegalArgumentException] if [mutf8Length] is negative.
+     * @throws[IllegalArgumentException] if [mutf8Length] exceeds [UShort.MAX_VALUE].
      * @throws[EOFException] if there are fewer bytes left in the source than expected by the [mutf8Length].
      * @throws[IOException] if the underlying source of bytes cannot be accessed.
      * @throws[IOException] if [readBytes] returns *more* bytes than expected by the [mutf8Length].
@@ -142,14 +151,14 @@ abstract class Mutf8Source {
      * second-most-significant bit unset (`0`), which is only expected for the second and third bytes of characters. In
      * other words, the byte's bits follow the pattern `10xx xxxx`, where each `x` can be either a `1` or `0`.
      */
-    fun readToString(mutf8Length: UShort): String {
-        if (mutf8Length.toInt() == 0) return ""
+    fun readToString(mutf8Length: Int): String {
+        if (mutf8Length == 0) return ""
 
         lateinit var chars: CharArray
         var c = 0
 
         read(mutf8Length,
-            begin = { chars = CharArray(mutf8Length.toInt()) },
+            begin = { chars = CharArray(mutf8Length) },
             consume = { char ->
                 chars[c++] = char
             })
@@ -160,7 +169,8 @@ abstract class Mutf8Source {
     /**
      * Reads a non-empty Modified UTF-8 string from the source.
      *
-     * @param[mutf8Length] The number of bytes that the string is represented using. This must be at least `1`.
+     * @param[mutf8Length] The number of bytes that the string is represented using. This must be at least `1`. This
+     * must be at least `1` and at most `65535` ([UShort.MAX_VALUE]).
      *
      * This is also the number of bytes that will be read from the source, assuming no exception is thrown.
      * @param[begin] A function that will be called immediately before [consume] is called the first time.
@@ -172,7 +182,10 @@ abstract class Mutf8Source {
      * Unless an exception is thrown, this will always be called at least once.
      * @return the string that was encoded in those bytes.
      *
-     * @throws[IllegalArgumentException] if [mutf8Length] is `0`.
+     * @throws[IllegalArgumentException] if [mutf8Length] is `0`; the caller should handle empty strings on its own by
+     * returning the equivalent for its respective type (e.g. `""` for strings, or `CharArray(size = 0)` for arrays).
+     * @throws[IllegalArgumentException] if [mutf8Length] is negative.
+     * @throws[IllegalArgumentException] if [mutf8Length] exceeds [UShort.MAX_VALUE].
      * @throws[EOFException] if there are fewer bytes left in the source than expected by the [mutf8Length].
      * @throws[IOException] if the underlying source of bytes cannot be accessed.
      * @throws[IOException] if [readBytes] returns *more* bytes than expected by the [mutf8Length].
@@ -187,18 +200,18 @@ abstract class Mutf8Source {
      * second-most-significant bit unset (`0`), which is only expected for the second and third bytes of characters. In
      * other words, the byte's bits follow the pattern `10xx xxxx`, where each `x` can be either a `1` or `0`.
      */
-    private inline fun read(mutf8Length: UShort, begin: () -> Unit, consume: (Char) -> Unit) {
-        val mutf8LengthInt = mutf8Length.toInt()
-        if (mutf8LengthInt == 0)
-            throw IllegalArgumentException("read() should not be called for empty strings")
+    private inline fun read(mutf8Length: Int, begin: () -> Unit, consume: (Char) -> Unit) {
+        require(mutf8Length != 0) { "read() should not be called for empty strings" }
+        require(mutf8Length > 0) { "mutf8Length must be at least 1, not $mutf8Length" }
+        require(mutf8Length <= UShort.MAX_VALUE.toInt()) { "mutf8Length must be at most ${UShort.MAX_VALUE}, not $mutf8Length" }
 
         val bytes = readBytes(amount = mutf8Length)
         var b = 0
 
-        if (bytes.size < mutf8LengthInt)
+        if (bytes.size < mutf8Length)
             throw EOFException("${bytes.size} bytes were read from the stream instead of the $mutf8Length expected")
 
-        if (bytes.size > mutf8LengthInt)
+        if (bytes.size > mutf8Length)
             throw IOException("${bytes.size} were received but only $mutf8Length were requested")
 
         begin()
@@ -212,11 +225,11 @@ abstract class Mutf8Source {
 
             consume(byte1.toChar())
             b++
-        } while (b < mutf8LengthInt)
+        } while (b < mutf8Length)
 
         // Same gist as the previous loop, but now we have to account for characters that are encoded using 2 and 3
         // bytes as well. If all the characters are ASCII, then this is skipped because the previous loop read them all.
-        while (b < mutf8LengthInt) {
+        while (b < mutf8Length) {
             val byte1 = bytes[b++].toInt()
 
             // Using the 4 most-significant bits of the first byte, we can determine how many bytes long the character
@@ -230,7 +243,7 @@ abstract class Mutf8Source {
                 // If the bits are `110x`, then it's 2 bytes.
                 12, 13 -> {
                     // If `byte1` was the last byte, throw because there's no `byte2` for us to read.
-                    if (b + 1 > mutf8LengthInt)
+                    if (b + 1 > mutf8Length)
                         throwForTruncatedChar(charSize = 2, bytesLeft = 0)
 
                     // Read the second byte and ensure its bits match the pattern `10xxxxxx`.
@@ -246,8 +259,8 @@ abstract class Mutf8Source {
                 14 -> {
                     // If `byte1` was the last byte, throw because there's no `byte2` for us to read. If `byte2` will be
                     // the last byte, throw because there's no `byte3` for us to read.
-                    if (b + 2 > mutf8LengthInt)
-                        throwForTruncatedChar(charSize = 2, bytesLeft = mutf8LengthInt - b)
+                    if (b + 2 > mutf8Length)
+                        throwForTruncatedChar(charSize = 2, bytesLeft = mutf8Length - b)
 
                     // Read the second byte and ensure its bits match the pattern `10xxxxxx`.
                     val byte2 = bytes[b++].toInt()
