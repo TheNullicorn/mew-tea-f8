@@ -1,17 +1,30 @@
-public final class me/nullicorn/mewteaf8/Mutf8InputStreams {
-	public static final fun readContentsFrom (Ljava/io/InputStream;S)Ljava/lang/String;
-	public static final fun readLengthFrom (Ljava/io/InputStream;)S
-	public static final fun readStringFrom (Ljava/io/InputStream;)Ljava/lang/String;
-	public static final fun writeContentsTo (Ljava/io/OutputStream;Ljava/lang/String;)V
-	public static final fun writeContentsTo (Ljava/io/OutputStream;Ljava/lang/String;I)V
-	public static synthetic fun writeContentsTo$default (Ljava/io/OutputStream;Ljava/lang/String;IILjava/lang/Object;)V
-	public static final fun writeLengthTo (Ljava/io/OutputStream;S)V
-	public static final fun writeStringTo (Ljava/io/OutputStream;Ljava/lang/String;)V
-	public static final fun writeStringTo (Ljava/io/OutputStream;Ljava/lang/String;I)V
-	public static synthetic fun writeStringTo$default (Ljava/io/OutputStream;Ljava/lang/String;IILjava/lang/Object;)V
+public final class me/nullicorn/mewteaf8/Mutf8Length {
+	public static final fun of (Ljava/lang/CharSequence;)J
+	public static final fun of (Ljava/lang/CharSequence;II)J
+	public static final fun of ([C)J
+	public static final fun of ([CII)J
+	public static synthetic fun of$default (Ljava/lang/CharSequence;IIILjava/lang/Object;)J
+	public static synthetic fun of$default ([CIIILjava/lang/Object;)J
 }
 
-public final class me/nullicorn/mewteaf8/Mutf8Length {
-	public static final synthetic fun of (Ljava/lang/CharSequence;)J
+public abstract class me/nullicorn/mewteaf8/Mutf8Sink {
+	public fun <init> ()V
+	public fun <init> (I)V
+	public synthetic fun <init> (IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	protected abstract fun writeBytes ([BI)V
+	public final synthetic fun writeFromArray (Ljava/lang/CharSequence;Lkotlin/ranges/IntRange;)V
+	public final fun writeFromArray ([C)V
+	public final fun writeFromArray ([CII)V
+	public final fun writeFromCharSequence (Ljava/lang/CharSequence;)V
+	public final fun writeFromCharSequence (Ljava/lang/CharSequence;II)V
+	public final synthetic fun writeFromCharSequence (Ljava/lang/CharSequence;Lkotlin/ranges/IntRange;)V
+}
+
+public abstract class me/nullicorn/mewteaf8/Mutf8Source {
+	public fun <init> ()V
+	protected abstract fun readBytes (I)[B
+	public final fun readToAppendable (ILjava/lang/Appendable;)V
+	public final fun readToArray (I)[C
+	public final fun readToString (I)Ljava/lang/String;
 }
 
