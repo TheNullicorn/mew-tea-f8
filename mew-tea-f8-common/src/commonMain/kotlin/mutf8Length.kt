@@ -73,10 +73,8 @@ val CharArray.mutf8Length: Long
  * @return the number of bytes needed to represent the range of characters as a Modified UTF-8 sequence.
  *
  * @throws[IllegalArgumentException] if the [length][CharSequence.length] of the [CharSequence] is a negative number.
- * @throws[IllegalArgumentException] if the [startIndex] is a negative number.
- * @throws[IllegalArgumentException] if the [startIndex] exceeds the [lastIndex][CharSequence.lastIndex].
- * @throws[IllegalArgumentException] if the [endIndex] is a negative number.
- * @throws[IllegalArgumentException] if the [endIndex] exceeds the [length][CharSequence.length].
+ * @throws[IndexOutOfBoundsException] if the [startIndex] is a negative number.
+ * @throws[IndexOutOfBoundsException] if the [endIndex] exceeds the [length][CharSequence.length].
  * @throws[IllegalArgumentException] if the [startIndex] is greater than the [endIndex].
  */
 @JvmName("of")
@@ -147,9 +145,15 @@ private inline fun calculateMutf8Length(lengthInChars: Int, hasNext: () -> Boole
 }
 
 private fun checkStartAndEndIndices(startIndex: Int, endIndex: Int, lengthInChars: Int) {
-    require(lengthInChars >= 0) { "length must be at least 0, not $lengthInChars" }
+    if (lengthInChars < 0)
+        throw IllegalArgumentException("length must be at least 0, not $lengthInChars")
 
-    require(startIndex >= 0) { "startIndex must be at least 0, not $startIndex" }
-    require(endIndex <= lengthInChars) { "endIndex, $endIndex, must not exceed length, $lengthInChars" }
-    require(startIndex <= endIndex) { "startIndex, $startIndex, must not exceed endIndex, $endIndex" }
+    if (startIndex < 0)
+        throw IndexOutOfBoundsException("startIndex must be at least 0, not $startIndex")
+
+    if (endIndex > lengthInChars)
+        throw IndexOutOfBoundsException("endIndex, $endIndex, must not exceed length, $lengthInChars")
+
+    if (startIndex > endIndex)
+        throw IllegalArgumentException("startIndex, $startIndex, must not exceed endIndex, $endIndex")
 }
