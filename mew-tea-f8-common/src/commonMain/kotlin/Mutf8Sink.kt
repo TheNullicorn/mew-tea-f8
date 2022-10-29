@@ -64,11 +64,13 @@ abstract class Mutf8Sink(private val bytesPerWrite: Int = 1024) {
      *
      * This index is exclusive, meaning the character at this index will not be written, nor will any after it.
      *
-     * @throws[IllegalArgumentException] if the [length][CharSequence.length] of the [CharSequence] is a negative number.
-     * @throws[IndexOutOfBoundsException] if the [startIndex] is a negative number.
-     * @throws[IndexOutOfBoundsException] if the [startIndex] is greater than or equal to the [length][CharSequence.length].
-     * @throws[IndexOutOfBoundsException] if the [endIndex] exceeds the [length][CharSequence.length].
-     * @throws[IllegalArgumentException] if the [startIndex] is greater than the [endIndex].
+     * @throws[IllegalArgumentException] if the [length][CharSequence.length] of the [CharSequence] is a negative
+     * number.
+     * @throws[IndexOutOfBoundsException] if the [startIndex] is negative.
+     * @throws[IndexOutOfBoundsException] if the [startIndex] exceeds the [length][CharSequence.length], or if they are
+     * equal to each other at a value other than `0`.
+     * @throws[IndexOutOfBoundsException] if [endIndex] exceeds the [length][CharSequence.length].
+     * @throws[IllegalArgumentException] if [startIndex] is greater than the [endIndex].
      * @throws[IOException] if an I/O issue occurs while trying to write any or all of the sequence's encoded bytes.
      */
     @Throws(IOException::class)
@@ -100,10 +102,12 @@ abstract class Mutf8Sink(private val bytesPerWrite: Int = 1024) {
      *
      * This index is exclusive, meaning the character at this index will not be written, nor will any after it.
      *
-     * @throws[IndexOutOfBoundsException] if the [startIndex] is a negative number.
-     * @throws[IndexOutOfBoundsException] if the [startIndex] is greater than or equal to the [size][CharArray.size].
-     * @throws[IndexOutOfBoundsException] if the [endIndex] exceeds the [size][CharArray.size].
-     * @throws[IllegalArgumentException] if the [startIndex] is greater than the [endIndex].
+     * @throws[IllegalArgumentException] if the [size][CharArray.size] of the [CharArray] is a negative number.
+     * @throws[IndexOutOfBoundsException] if the [startIndex] is negative.
+     * @throws[IndexOutOfBoundsException] if the [startIndex] exceeds the [size][CharArray.size], or if they are
+     * equal to each other at a value other than `0`.
+     * @throws[IndexOutOfBoundsException] if [endIndex] exceeds the [size][CharArray.size].
+     * @throws[IllegalArgumentException] if [startIndex] is greater than the [endIndex].
      * @throws[IOException] if an I/O issue occurs while trying to write any or all of the sequence's encoded bytes.
      */
     @Throws(IOException::class)
@@ -194,11 +198,11 @@ abstract class Mutf8Sink(private val bytesPerWrite: Int = 1024) {
      *
      * @throws[IllegalArgumentException] if [characters] is a [CharSequence] whose [length][CharSequence.length] is a
      * negative number.
-     * @throws[IndexOutOfBoundsException] if the [startIndex] is a negative number.
-     * @throws[IndexOutOfBoundsException] if the [startIndex] is greater than or equal to the `length` or `size` of
-     * [characters].
-     * @throws[IndexOutOfBoundsException] if the [endIndex] exceeds the `length` or `size` of [characters].
-     * @throws[IllegalArgumentException] if the [startIndex] is greater than the [endIndex].
+     * @throws[IndexOutOfBoundsException] if the [startIndex] is negative.
+     * @throws[IndexOutOfBoundsException] if the [startIndex] exceeds the object's `length` (or `size`), or if they are
+     * equal to each other at a value other than `0`.
+     * @throws[IndexOutOfBoundsException] if [endIndex] exceeds the object's `length` (or `size`).
+     * @throws[IllegalArgumentException] if [startIndex] is greater than the [endIndex].
      * @throws[IOException] if an I/O issue occurs while trying to write any or all of the object's encoded bytes.
      */
     @Throws(IOException::class)

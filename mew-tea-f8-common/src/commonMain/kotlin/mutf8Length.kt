@@ -64,19 +64,21 @@ val CharArray.mutf8Length: Long
  * ```
  *
  * @receiver The characters to determine the collective length of, in bytes.
- * @param[startIndex] The inclusive index in the [CharSequence] of the first character to be added to the sum.
- * Characters before this index will not be counted towards the sum, but ones at or after it (until [endIndex]) will be.
- * This must be at least equal to `0`, and at most equal to [CharSequence.lastIndex].
- * @param[endIndex] The exclusive index in the [CharSequence] of the last character to be added to the sum. Characters
- * at or after this index will not be counted toward the sum. It must be at least equal to [startIndex], and at most
- * equal to the [length][CharSequence.length] of the [CharSequence].
+ * @param[startIndex] The index in the sequence to start counting from.
+ *
+ * If the sequence is [empty][CharSequence.isEmpty], this must be `0`. Otherwise, it should be a valid index in the
+ * sequence, such that it appears in the sequence's [indices][CharSequence.indices]. This can never be less than `0`.
+ * @param[endIndex] The index in the sequence to stop counting at.
+ *
+ * This cannot exceed the [length][CharSequence.length] of the sequence, and cannot be less than the [startIndex].
  * @return the number of bytes needed to represent the range of characters as a Modified UTF-8 sequence.
  *
  * @throws[IllegalArgumentException] if the [length][CharSequence.length] of the [CharSequence] is a negative number.
- * @throws[IndexOutOfBoundsException] if the [startIndex] is a negative number.
- * @throws[IndexOutOfBoundsException] if the [startIndex] is greater than or equal to the [length][CharSequence.length].
- * @throws[IndexOutOfBoundsException] if the [endIndex] exceeds the [length][CharSequence.length].
- * @throws[IllegalArgumentException] if the [startIndex] is greater than the [endIndex].
+ * @throws[IndexOutOfBoundsException] if the [startIndex] is negative.
+ * @throws[IndexOutOfBoundsException] if the [startIndex] exceeds the [length][CharSequence.length], or if they are
+ * equal to each other at a value other than `0`.
+ * @throws[IndexOutOfBoundsException] if [endIndex] exceeds the [length][CharSequence.length].
+ * @throws[IllegalArgumentException] if [startIndex] is greater than the [endIndex].
  */
 @JvmName("of")
 fun CharSequence.mutf8Length(startIndex: Int = 0, endIndex: Int = length): Long {
@@ -151,7 +153,7 @@ private fun checkStartAndEndIndices(startIndex: Int, endIndex: Int, lengthInChar
     if (startIndex < 0)
         throw IndexOutOfBoundsException("startIndex must be at least 0, not $startIndex")
 
-    if (startIndex >= lengthInChars && lengthInChars != 0)
+    if (startIndex > lengthInChars || (startIndex == lengthInChars && lengthInChars != 0))
         throw IndexOutOfBoundsException("startIndex, $startIndex, must be less than length, $lengthInChars")
 
     if (endIndex > lengthInChars)
