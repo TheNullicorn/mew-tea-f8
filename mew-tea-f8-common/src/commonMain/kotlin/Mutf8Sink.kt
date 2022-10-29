@@ -226,36 +226,40 @@ abstract class Mutf8Sink(private val bytesPerWrite: Int = 1024) {
         val bufferSize = min(bytesPerWrite, mutf8LengthInt)
         if (bufferSize > buffer.size) buffer = ByteArray(bufferSize)
 
+        // c = our current index in the `characters` object
+        // b = our current index in the `buffer`
+        var c = startIndex
+        var b = 0
+
         // Encode each character one-by-one.
-        var i = startIndex
-        while (i != endIndex) {
-            val char = characters.getChar(i++)
+        while (c != endIndex) {
+            val char = characters.getChar(c++)
 
             // Determine how many bytes the `char` should be encoded in based on its binary magnitude, or the position
             // its most-significant set bit is.
             when (char.code.toShort().countLeadingZeroBits()) {
                 // Characters whose codes start with 8 or more `0` bits (except '\u0000') are encoded using 1 byte.
                 15, 14, 13, 12, 11, 10, 9 -> {
-                    i = writeByte(i, char.code)
+                    b = writeByte(b, char.code)
                 }
 
                 // Characters whose codes start with 4 through 7 `0` bits (and '\u0000') are encoded using 2 bytes.
                 8, 7, 6, 5, 16 -> {
-                    i = writeByte(i, char.code shr 6 and 0x1F or 0xC0)
-                    i = writeByte(i, char.code /* */ and 0x3F or 0x80)
+                    b = writeByte(b, char.code shr 6 and 0x1F or 0xC0)
+                    b = writeByte(b, char.code /* */ and 0x3F or 0x80)
                 }
 
                 // Characters whose codes start with 0 through 3 `0` bits are encoded using 3 bytes.
                 else -> {
-                    i = writeByte(i, char.code shr 12 /**/ and 0x0F or 0xE0)
-                    i = writeByte(i, char.code shr 6 /* */ and 0x3F or 0x80)
-                    i = writeByte(i, char.code /*       */ and 0x3F or 0x80)
+                    b = writeByte(b, char.code shr 12 /**/ and 0x0F or 0xE0)
+                    b = writeByte(b, char.code shr 6 /* */ and 0x3F or 0x80)
+                    b = writeByte(b, char.code /*       */ and 0x3F or 0x80)
                 }
             }
         }
 
         // If any bytes are left in the buffer that haven't been flushed, do that now.
-        flush(i)
+        flush(b)
     }
 
     /**
