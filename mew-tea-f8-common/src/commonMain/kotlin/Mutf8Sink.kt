@@ -7,7 +7,7 @@ import kotlin.math.min
  * Something that Modified UTF-8 data can be written to.
  *
  * For convenience in various scenarios, said data can be written from several forms:
- * - [writeFromCharSequence]: The characters to write are taken a [CharSequence], such as a [String]
+ * - [writeFromSequence]: The characters to write are taken a [CharSequence], such as a [String]
  * - [writeFromArray]: The characters to write are taken from a [CharArray]
  *
  * Both methods also have overloads for writing a specific range of characters from the sequences, rather than the
@@ -74,7 +74,7 @@ abstract class Mutf8Sink(private val bytesPerWrite: Int = 1024) {
      * @throws[IOException] if an I/O issue occurs while trying to write any or all of the sequence's encoded bytes.
      */
     @Throws(IOException::class)
-    fun writeFromCharSequence(characters: CharSequence, startIndex: Int, endIndex: Int) =
+    fun writeFromSequence(characters: CharSequence, startIndex: Int, endIndex: Int) =
         write(
             characters,
             startIndex,
@@ -121,17 +121,17 @@ abstract class Mutf8Sink(private val bytesPerWrite: Int = 1024) {
         )
 
     /**
-     * An alias for [writeFromCharSequence] that uses a single [range] parameter, rather than a separate `startIndex`
-     * and `endIndex`.
+     * An alias for [writeFromSequence] that uses a single [range] parameter, rather than a separate `startIndex` and
+     * `endIndex`.
      *
-     * Other than that, the entire contract of [writeFromCharSequence] applies to this method as well.
+     * Other than that, the entire contract of [writeFromSequence] applies to this method as well.
      *
-     * @see[writeFromCharSequence]
+     * @see[writeFromSequence]
      */
     @JvmSynthetic
     @Throws(IOException::class)
-    fun writeFromCharSequence(characters: CharSequence, range: IntRange) =
-        writeFromCharSequence(characters, startIndex = range.first, endIndex = range.last)
+    fun writeFromSequence(characters: CharSequence, range: IntRange) =
+        writeFromSequence(characters, startIndex = range.first, endIndex = range.last)
 
     /**
      * An alias for [writeFromArray] that uses a single [range] parameter, rather than a separate `startIndex` and
@@ -149,19 +149,19 @@ abstract class Mutf8Sink(private val bytesPerWrite: Int = 1024) {
     /**
      * Encodes all the characters in a [CharSequence] and writes them to the sink's underlying destination.
      *
-     * This is an alias for [writeFromCharSequence] with `startIndex = 0` and `endIndex = characters.length`. The
-     * selected indices are guaranteed to be valid, so all [IllegalArgumentException]s documented at
-     * [writeFromCharSequence] are guaranteed not to occur unless also documented on this function. Other than that, the
-     * contract & documentation for [writeFromCharSequence] applies here as well.
+     * This is an alias for [writeFromSequence] with `startIndex = 0` and `endIndex = characters.length`. The selected
+     * indices are guaranteed to be valid, so all [IllegalArgumentException]s documented at [writeFromSequence] are
+     * guaranteed not to occur unless also documented on this function. Other than that, the contract & documentation
+     * for [writeFromSequence] applies here as well.
      *
      * @throws[IllegalArgumentException] if the [length][CharSequence.length] of the [CharSequence] is a negative
      * number.
      *
-     * @see[writeFromCharSequence]
+     * @see[writeFromSequence]
      */
     @Throws(IOException::class)
-    fun writeFromCharSequence(characters: CharSequence) =
-        writeFromCharSequence(characters, startIndex = 0, endIndex = characters.length)
+    fun writeFromSequence(characters: CharSequence) =
+        writeFromSequence(characters, startIndex = 0, endIndex = characters.length)
 
     /**
      * Encodes all the characters in a [CharSequence] and writes them to the sink's underlying destination.

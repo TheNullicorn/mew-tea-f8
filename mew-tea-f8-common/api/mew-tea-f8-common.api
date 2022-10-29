@@ -12,12 +12,12 @@ public abstract class me/nullicorn/mewteaf8/Mutf8Sink {
 	public fun <init> (I)V
 	public synthetic fun <init> (IILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	protected abstract fun writeBytes ([BI)V
-	public final synthetic fun writeFromArray (Ljava/lang/CharSequence;Lkotlin/ranges/IntRange;)V
 	public final fun writeFromArray ([C)V
 	public final fun writeFromArray ([CII)V
-	public final fun writeFromCharSequence (Ljava/lang/CharSequence;)V
-	public final fun writeFromCharSequence (Ljava/lang/CharSequence;II)V
-	public final synthetic fun writeFromCharSequence (Ljava/lang/CharSequence;Lkotlin/ranges/IntRange;)V
+	public final synthetic fun writeFromArray ([CLkotlin/ranges/IntRange;)V
+	public final fun writeFromSequence (Ljava/lang/CharSequence;)V
+	public final fun writeFromSequence (Ljava/lang/CharSequence;II)V
+	public final synthetic fun writeFromSequence (Ljava/lang/CharSequence;Lkotlin/ranges/IntRange;)V
 }
 
 public abstract class me/nullicorn/mewteaf8/Mutf8Source {
