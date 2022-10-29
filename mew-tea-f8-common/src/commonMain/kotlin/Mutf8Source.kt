@@ -26,6 +26,7 @@ abstract class Mutf8Source {
      * @throws[EOFException] if there are fewer bytes left in the source than expected by the [amount].
      * @throws[IOException] if the underlying source of bytes cannot be accessed.
      */
+    @Throws(IOException::class, EOFException::class)
     protected abstract fun readBytes(amount: Int): ByteArray
 
     /**
@@ -57,6 +58,7 @@ abstract class Mutf8Source {
      * second-most-significant bit unset (`0`), which is only expected for the second and third bytes of characters. In
      * other words, the byte's bits follow the pattern `10xx xxxx`, where each `x` can be either a `1` or `0`.
      */
+    @Throws(IOException::class, EOFException::class, UTFDataFormatException::class)
     fun readToAppendable(mutf8Length: Int, destination: Appendable) {
         if (mutf8Length == 0) return
 
@@ -103,6 +105,7 @@ abstract class Mutf8Source {
      * second-most-significant bit unset (`0`), which is only expected for the second and third bytes of characters. In
      * other words, the byte's bits follow the pattern `10xx xxxx`, where each `x` can be either a `1` or `0`.
      */
+    @Throws(IOException::class, EOFException::class, UTFDataFormatException::class)
     fun readToArray(mutf8Length: Int): CharArray {
         if (mutf8Length == 0) return EMPTY_CHAR_ARRAY
 
@@ -151,6 +154,7 @@ abstract class Mutf8Source {
      * second-most-significant bit unset (`0`), which is only expected for the second and third bytes of characters. In
      * other words, the byte's bits follow the pattern `10xx xxxx`, where each `x` can be either a `1` or `0`.
      */
+    @Throws(IOException::class, EOFException::class, UTFDataFormatException::class)
     fun readToString(mutf8Length: Int): String {
         if (mutf8Length == 0) return ""
 
@@ -200,6 +204,7 @@ abstract class Mutf8Source {
      * second-most-significant bit unset (`0`), which is only expected for the second and third bytes of characters. In
      * other words, the byte's bits follow the pattern `10xx xxxx`, where each `x` can be either a `1` or `0`.
      */
+    @Throws(IOException::class, EOFException::class, UTFDataFormatException::class)
     private inline fun read(mutf8Length: Int, begin: () -> Unit, consume: (Char) -> Unit) {
         require(mutf8Length != 0) { "read() should not be called for empty strings" }
         require(mutf8Length > 0) { "mutf8Length must be at least 1, not $mutf8Length" }
@@ -282,12 +287,15 @@ abstract class Mutf8Source {
         }
     }
 
+    @Throws(UTFDataFormatException::class)
     private fun throwForTruncatedChar(charSize: Int, bytesLeft: Int): Nothing =
         throw UTFDataFormatException("A ${charSize}-byte character was started with${if (bytesLeft > 0) "only" else ""} $bytesLeft bytes left in the string")
 
+    @Throws(UTFDataFormatException::class)
     private fun throwForBadPrimaryByte(byte: Int): Nothing =
         throw UTFDataFormatException("Byte #1 of a character has the bits ${byte.toBinaryOctet()}₂ which doesn't match any of the expected patterns: 0xxxxxxx₂ or 110xxxxx₂ or 1110xxxx₂")
 
+    @Throws(UTFDataFormatException::class)
     private fun throwForBadSecondaryByte(byte: Int, charSize: Int, byteOffset: Int): Nothing =
         throw UTFDataFormatException("Byte #${byteOffset + 1} of a ${charSize}-byte character has the bits ${byte.toBinaryOctet()}₂ which don't match the expected pattern 10xxxxxx₂")
 

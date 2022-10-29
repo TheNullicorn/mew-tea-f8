@@ -39,7 +39,10 @@ abstract class Mutf8Sink(private val bytesPerWrite: Int = 1024) {
      *
      * @param[bytes] The bytes whose elements should be written.
      * @param[untilIndex] The index which no bytes at or after should be written from the [bytes] array.
+     *
+     * @throws[IOException] if an I/O issue occurs while trying to write any or all of the bytes.
      */
+    @Throws(IOException::class)
     protected abstract fun writeBytes(bytes: ByteArray, untilIndex: Int)
 
     /**
@@ -61,13 +64,14 @@ abstract class Mutf8Sink(private val bytesPerWrite: Int = 1024) {
      *
      * This index is exclusive, meaning the character at this index will not be written, nor will any after it.
      *
-     * @throws[IllegalArgumentException] if the [length][CharSequence.length] of the [characters] is a negative number.
-     * @throws[IllegalArgumentException] if the [startIndex] is a negative number.
-     * @throws[IllegalArgumentException] if the [startIndex] exceeds the [lastIndex][CharSequence.lastIndex].
-     * @throws[IllegalArgumentException] if the [endIndex] is a negative number.
-     * @throws[IllegalArgumentException] if the [endIndex] exceeds the [length][CharSequence.length].
+     * @throws[IllegalArgumentException] if the [length][CharSequence.length] of the [CharSequence] is a negative number.
+     * @throws[IndexOutOfBoundsException] if the [startIndex] is a negative number.
+     * @throws[IndexOutOfBoundsException] if the [startIndex] is greater than or equal to the [length][CharSequence.length].
+     * @throws[IndexOutOfBoundsException] if the [endIndex] exceeds the [length][CharSequence.length].
      * @throws[IllegalArgumentException] if the [startIndex] is greater than the [endIndex].
+     * @throws[IOException] if an I/O issue occurs while trying to write any or all of the sequence's encoded bytes.
      */
+    @Throws(IOException::class)
     fun writeFromCharSequence(characters: CharSequence, startIndex: Int, endIndex: Int) =
         write(
             characters,
@@ -96,12 +100,13 @@ abstract class Mutf8Sink(private val bytesPerWrite: Int = 1024) {
      *
      * This index is exclusive, meaning the character at this index will not be written, nor will any after it.
      *
-     * @throws[IllegalArgumentException] if the [startIndex] is a negative number.
-     * @throws[IllegalArgumentException] if the [startIndex] exceeds the [lastIndex][CharArray.lastIndex].
-     * @throws[IllegalArgumentException] if the [endIndex] is a negative number.
-     * @throws[IllegalArgumentException] if the [endIndex] exceeds the [size][CharArray.size].
+     * @throws[IndexOutOfBoundsException] if the [startIndex] is a negative number.
+     * @throws[IndexOutOfBoundsException] if the [startIndex] is greater than or equal to the [size][CharArray.size].
+     * @throws[IndexOutOfBoundsException] if the [endIndex] exceeds the [size][CharArray.size].
      * @throws[IllegalArgumentException] if the [startIndex] is greater than the [endIndex].
+     * @throws[IOException] if an I/O issue occurs while trying to write any or all of the sequence's encoded bytes.
      */
+    @Throws(IOException::class)
     fun writeFromArray(characters: CharArray, startIndex: Int, endIndex: Int) =
         write(
             characters,
@@ -120,6 +125,7 @@ abstract class Mutf8Sink(private val bytesPerWrite: Int = 1024) {
      * @see[writeFromCharSequence]
      */
     @JvmSynthetic
+    @Throws(IOException::class)
     fun writeFromCharSequence(characters: CharSequence, range: IntRange) =
         writeFromCharSequence(characters, startIndex = range.first, endIndex = range.last)
 
@@ -132,6 +138,7 @@ abstract class Mutf8Sink(private val bytesPerWrite: Int = 1024) {
      * @see[writeFromArray]
      */
     @JvmSynthetic
+    @Throws(IOException::class)
     fun writeFromArray(characters: CharSequence, range: IntRange) =
         writeFromCharSequence(characters, startIndex = range.first, endIndex = range.last)
 
@@ -148,6 +155,7 @@ abstract class Mutf8Sink(private val bytesPerWrite: Int = 1024) {
      *
      * @see[writeFromCharSequence]
      */
+    @Throws(IOException::class)
     fun writeFromCharSequence(characters: CharSequence) =
         writeFromCharSequence(characters, startIndex = 0, endIndex = characters.length)
 
@@ -160,6 +168,7 @@ abstract class Mutf8Sink(private val bytesPerWrite: Int = 1024) {
      *
      * @see[writeFromArray]
      */
+    @Throws(IOException::class)
     fun writeFromArray(characters: CharArray) =
         writeFromArray(characters, startIndex = 0, endIndex = characters.size)
 
@@ -182,7 +191,17 @@ abstract class Mutf8Sink(private val bytesPerWrite: Int = 1024) {
      * @param[getMutf8Length] A reference to the `mutf8Length` function for [T], such as [CharSequence.mutf8Length] or
      * [CharArray.mutf8Length].
      * @param[getChar] A function for retrieving one of the object's characters, given that character's index.
+     *
+     * @throws[IllegalArgumentException] if [characters] is a [CharSequence] whose [length][CharSequence.length] is a
+     * negative number.
+     * @throws[IndexOutOfBoundsException] if the [startIndex] is a negative number.
+     * @throws[IndexOutOfBoundsException] if the [startIndex] is greater than or equal to the `length` or `size` of
+     * [characters].
+     * @throws[IndexOutOfBoundsException] if the [endIndex] exceeds the `length` or `size` of [characters].
+     * @throws[IllegalArgumentException] if the [startIndex] is greater than the [endIndex].
+     * @throws[IOException] if an I/O issue occurs while trying to write any or all of the object's encoded bytes.
      */
+    @Throws(IOException::class)
     private inline fun <T> write(
         characters: T,
         startIndex: Int,
@@ -250,7 +269,10 @@ abstract class Mutf8Sink(private val bytesPerWrite: Int = 1024) {
      * @param[value] The value to insert at that [index] in the [buffer]. Only the 8 least-significant bits of this
      * number are used; in other words, `value and 0xFF`.
      * @return the index that the next byte, if any, should be written at.
+     *
+     * @throws[IOException] if the [buffer] is flushed but an I/O issue occurs while trying to do so.
      */
+    @Throws(IOException::class)
     private inline fun writeByte(index: Int, value: Int): Int {
         var i = index
 
@@ -271,7 +293,10 @@ abstract class Mutf8Sink(private val bytesPerWrite: Int = 1024) {
      *
      * @param[untilIndex] The exclusive index of the last byte to write in the [buffer]. This is also the number of
      * bytes that will be written.
+     *
+     * @throws[IOException] if an I/O issue occurs while trying to write the [buffer]'s bytes.
      */
+    @Throws(IOException::class)
     private inline fun flush(untilIndex: Int) {
         if (untilIndex != 0)
             writeBytes(buffer, untilIndex)
