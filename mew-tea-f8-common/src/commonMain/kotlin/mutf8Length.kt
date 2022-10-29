@@ -74,6 +74,7 @@ val CharArray.mutf8Length: Long
  *
  * @throws[IllegalArgumentException] if the [length][CharSequence.length] of the [CharSequence] is a negative number.
  * @throws[IndexOutOfBoundsException] if the [startIndex] is a negative number.
+ * @throws[IndexOutOfBoundsException] if the [startIndex] is greater than or equal to the [length][CharSequence.length].
  * @throws[IndexOutOfBoundsException] if the [endIndex] exceeds the [length][CharSequence.length].
  * @throws[IllegalArgumentException] if the [startIndex] is greater than the [endIndex].
  */
@@ -149,6 +150,9 @@ private fun checkStartAndEndIndices(startIndex: Int, endIndex: Int, lengthInChar
 
     if (startIndex < 0)
         throw IndexOutOfBoundsException("startIndex must be at least 0, not $startIndex")
+
+    if (startIndex >= lengthInChars && lengthInChars != 0)
+        throw IndexOutOfBoundsException("startIndex, $startIndex, must be less than length, $lengthInChars")
 
     if (endIndex > lengthInChars)
         throw IndexOutOfBoundsException("endIndex, $endIndex, must not exceed length, $lengthInChars")
