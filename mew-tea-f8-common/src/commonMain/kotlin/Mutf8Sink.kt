@@ -139,8 +139,8 @@ abstract class Mutf8Sink(private val bytesPerWrite: Int = 1024) {
      */
     @JvmSynthetic
     @Throws(IOException::class)
-    fun writeFromArray(characters: CharSequence, range: IntRange) =
-        writeFromCharSequence(characters, startIndex = range.first, endIndex = range.last)
+    fun writeFromArray(characters: CharArray, range: IntRange) =
+        writeFromArray(characters, startIndex = range.first, endIndex = range.last)
 
     /**
      * Encodes all the characters in a [CharSequence] and writes them to the sink's underlying destination.
