@@ -5,6 +5,31 @@ package me.nullicorn.mewteaf8
 import kotlin.jvm.JvmName
 
 /**
+ * The number of bytes needed to encode the character in Modified UTF-8.
+ *
+ * - For characters in the range `'\u0001' .. '\u007F'`, this is `1`
+ * - For characters in the range `'\u0080' .. '\u07FF'`, this is `2`
+ * - For characters in the range `'\u0800' .. '\uFFFF'`, this is `3`
+ * - For the character `'\u0000'`, this is `2`
+ *
+ * That list covers the entire range of a [Char], so there are no other values to note.
+ *
+ * @receiver The character to check the Modified UTF-8 length of.
+ */
+val Char.mutf8Length: Long
+    get() = when (this.code.toShort().countLeadingZeroBits()) {
+        // Characters in the range `'\u0001' .. '\u007F'` are encoded using `1` byte
+        15, 14, 13, 12, 11, 10, 9 -> 1
+
+        // Characters in the range `'\u0080' .. '\u07FF'` are encoded using `2` bytes
+        // The character `'\u0000'` is encoded using `2` bytes
+        16, 8, 7, 6, 5 -> 2
+
+        // Characters in the range `'\u0800' .. '\uFFFF'` are encoded using `3` bytes
+        else -> 3
+    }
+
+/**
  * The number of bytes needed to encode the entire sequence of characters in Modified UTF-8.
  *
  * This is an alias for [CharSequence.mutf8Length] with `startIndex = 0` and `endIndex = length`. The selected indices
