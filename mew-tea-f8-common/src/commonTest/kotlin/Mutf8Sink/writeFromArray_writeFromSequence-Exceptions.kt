@@ -79,7 +79,7 @@ class WriteFromArrayAndSequenceExceptionsTests {
 
                 // Overload that takes a `CharArray` and `IntRange`.
                 assertFailsWith<IndexOutOfBoundsException> {
-                    BlackHoleMutf8Sink.writeFromArray(charArray, range = startIndex..startIndex)
+                    BlackHoleMutf8Sink.writeFromArray(charArray, range = startIndex until startIndex)
                 }
 
                 // Overload that takes a `CharSequence` and `startIndex` + `endIndex`.
@@ -89,7 +89,7 @@ class WriteFromArrayAndSequenceExceptionsTests {
 
                 // Overload that takes a `CharSequence` and `IntRange`.
                 assertFailsWith<IndexOutOfBoundsException> {
-                    BlackHoleMutf8Sink.writeFromSequence(string, range = startIndex..startIndex)
+                    BlackHoleMutf8Sink.writeFromSequence(string, range = startIndex until startIndex)
                 }
             }
     }
@@ -108,7 +108,7 @@ class WriteFromArrayAndSequenceExceptionsTests {
 
                 // Overload that takes a `CharArray` and `IntRange`.
                 assertFailsWith<IndexOutOfBoundsException> {
-                    BlackHoleMutf8Sink.writeFromArray(charArray, range = 0..endIndex)
+                    BlackHoleMutf8Sink.writeFromArray(charArray, range = 0 until endIndex)
                 }
 
                 // Overload that takes a `CharSequence` and `startIndex` + `endIndex`.
@@ -118,7 +118,7 @@ class WriteFromArrayAndSequenceExceptionsTests {
 
                 // Overload that takes a `CharSequence` and `IntRange`.
                 assertFailsWith<IndexOutOfBoundsException> {
-                    BlackHoleMutf8Sink.writeFromSequence(string, range = 0..endIndex)
+                    BlackHoleMutf8Sink.writeFromSequence(string, range = 0 until endIndex)
                 }
             }
     }
@@ -139,7 +139,7 @@ class WriteFromArrayAndSequenceExceptionsTests {
 
                 // Overload that takes a `CharArray` and `IntRange`.
                 assertFailsWith<IllegalArgumentException> {
-                    BlackHoleMutf8Sink.writeFromArray(charArray, range = startIndex..0)
+                    BlackHoleMutf8Sink.writeFromArray(charArray, range = startIndex until 0)
                 }
 
                 // Overload that takes a `CharSequence` and `startIndex` + `endIndex`.
@@ -149,7 +149,7 @@ class WriteFromArrayAndSequenceExceptionsTests {
 
                 // Overload that takes a `CharSequence` and `IntRange`.
                 assertFailsWith<IllegalArgumentException> {
-                    BlackHoleMutf8Sink.writeFromSequence(string, range = startIndex..0)
+                    BlackHoleMutf8Sink.writeFromSequence(string, range = startIndex until 0)
                 }
             }
     }

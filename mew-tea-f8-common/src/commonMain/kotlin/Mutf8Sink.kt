@@ -131,7 +131,7 @@ abstract class Mutf8Sink(private val bytesPerWrite: Int = 1024) {
     @JvmSynthetic
     @Throws(IOException::class)
     fun writeFromSequence(characters: CharSequence, range: IntRange) =
-        writeFromSequence(characters, startIndex = range.first, endIndex = range.last)
+        writeFromSequence(characters, startIndex = range.first, endIndex = range.last + 1)
 
     /**
      * An alias for [writeFromArray] that uses a single [range] parameter, rather than a separate `startIndex` and
@@ -144,7 +144,7 @@ abstract class Mutf8Sink(private val bytesPerWrite: Int = 1024) {
     @JvmSynthetic
     @Throws(IOException::class)
     fun writeFromArray(characters: CharArray, range: IntRange) =
-        writeFromArray(characters, startIndex = range.first, endIndex = range.last)
+        writeFromArray(characters, startIndex = range.first, endIndex = range.last + 1)
 
     /**
      * Encodes all the characters in a [CharSequence] and writes them to the sink's underlying destination.
