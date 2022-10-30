@@ -45,6 +45,8 @@ abstract class Mutf8Sink(private val bytesPerWrite: Int = 1024) {
     @Throws(IOException::class)
     protected abstract fun writeBytes(bytes: ByteArray, untilIndex: Int)
 
+    // region Ranged Overloads (startIndex, endIndex)
+
     /**
      * Encodes all the characters in a specific range of a [CharSequence] and writes them to the sink's underlying
      * destination.
@@ -71,6 +73,8 @@ abstract class Mutf8Sink(private val bytesPerWrite: Int = 1024) {
      * equal to each other at a value other than `0`.
      * @throws[IndexOutOfBoundsException] if [endIndex] exceeds the [length][CharSequence.length].
      * @throws[IllegalArgumentException] if [startIndex] is greater than the [endIndex].
+     * @throws[IllegalArgumentException] if the [mutf8Length][CharSequence.mutf8Length] of the [characters] in that
+     * range exceeds `65535` ([UShort.MAX_VALUE]).
      * @throws[IOException] if an I/O issue occurs while trying to write any or all of the sequence's encoded bytes.
      */
     @Throws(IOException::class)
@@ -108,6 +112,8 @@ abstract class Mutf8Sink(private val bytesPerWrite: Int = 1024) {
      * equal to each other at a value other than `0`.
      * @throws[IndexOutOfBoundsException] if [endIndex] exceeds the [size][CharArray.size].
      * @throws[IllegalArgumentException] if [startIndex] is greater than the [endIndex].
+     * @throws[IllegalArgumentException] if the [mutf8Length][CharArray.mutf8Length] of the [characters] in that range
+     * exceeds `65535` ([UShort.MAX_VALUE]).
      * @throws[IOException] if an I/O issue occurs while trying to write any or all of the sequence's encoded bytes.
      */
     @Throws(IOException::class)
@@ -119,6 +125,9 @@ abstract class Mutf8Sink(private val bytesPerWrite: Int = 1024) {
             getMutf8Length = CharArray::mutf8Length,
             getChar = { i -> characters[i] }
         )
+
+    //endregion
+    //region Ranged Overloads (IntRange)
 
     /**
      * An alias for [writeFromSequence] that uses a single [range] parameter, rather than a separate `startIndex` and
@@ -146,6 +155,9 @@ abstract class Mutf8Sink(private val bytesPerWrite: Int = 1024) {
     fun writeFromArray(characters: CharArray, range: IntRange) =
         writeFromArray(characters, startIndex = range.first, endIndex = range.last + 1)
 
+    //endregion
+    //region No-Range Overloads
+
     /**
      * Encodes all the characters in a [CharSequence] and writes them to the sink's underlying destination.
      *
@@ -156,6 +168,8 @@ abstract class Mutf8Sink(private val bytesPerWrite: Int = 1024) {
      *
      * @throws[IllegalArgumentException] if the [length][CharSequence.length] of the [CharSequence] is a negative
      * number.
+     * @throws[IllegalArgumentException] if the [mutf8Length][CharSequence.mutf8Length] of the [characters] exceeds
+     * `65535` ([UShort.MAX_VALUE]).
      *
      * @see[writeFromSequence]
      */
@@ -167,14 +181,20 @@ abstract class Mutf8Sink(private val bytesPerWrite: Int = 1024) {
      * Encodes all the characters in a [CharSequence] and writes them to the sink's underlying destination.
      *
      * This is an alias for [writeFromArray] with `startIndex = 0` and `endIndex = characters.size`. The selected
-     * indices are guaranteed to be valid, so all [IllegalArgumentException]s documented at [writeFromArray] are
-     * guaranteed not to occur. Other than that, the contract & documentation for [writeFromArray] applies here as well.
+     * indices are guaranteed to be valid, so all [IllegalArgumentException]s and [IndexOutOfBoundsException]s
+     * documented at [writeFromArray] are guaranteed not to occur unless also documented on this function. Other than
+     * that, the contract & documentation for [writeFromArray] applies here as well.
+     *
+     * @throws[IllegalArgumentException] if the [mutf8Length][CharArray.mutf8Length] of the [characters] exceeds `65535`
+     * ([UShort.MAX_VALUE]).
      *
      * @see[writeFromArray]
      */
     @Throws(IOException::class)
     fun writeFromArray(characters: CharArray) =
         writeFromArray(characters, startIndex = 0, endIndex = characters.size)
+
+    //endregion
 
     /**
      * Writes all the [characters] in a specific range of an object, [T], given a [function][getChar] for retrieving
@@ -203,6 +223,8 @@ abstract class Mutf8Sink(private val bytesPerWrite: Int = 1024) {
      * equal to each other at a value other than `0`.
      * @throws[IndexOutOfBoundsException] if [endIndex] exceeds the object's `length` (or `size`).
      * @throws[IllegalArgumentException] if [startIndex] is greater than the [endIndex].
+     * @throws[IllegalArgumentException] if the length of the string, as calculated by [getMutf8Length], exceeds
+     * `65535` ([UShort.MAX_VALUE]).
      * @throws[IOException] if an I/O issue occurs while trying to write any or all of the object's encoded bytes.
      */
     @Throws(IOException::class)
