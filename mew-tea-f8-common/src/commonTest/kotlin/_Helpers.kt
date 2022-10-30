@@ -2,14 +2,16 @@ package me.nullicorn.mewteaf8
 
 import kotlin.random.Random
 
-// Characters encoded using 1 byte each. This range contains 127 characters.
-internal val singleByteChars: Iterable<Char> = '\u0001'..'\u007F'
+fun createReproducibleRandom() = Random(seed = "mew-tea-f8".hashCode())
 
-// Characters encoded using 2 bytes each. This range contains 1,920 characters.
-internal val doubleByteChars: Iterable<Char> = '\u0080'..'\u07FF'
+// Characters encoded using 1 byte each. This range contains 127 characters.
+internal val singleByteOutputChars: Iterable<Char> = '\u0001'..'\u007F'
+
+// Characters encoded using 2 bytes each. This range contains 1,921 characters.
+internal val doubleByteOutputChars: Iterable<Char> = ('\u0080'..'\u07FF') + '\u0000'
 
 // Characters encoded using 3 bytes each. There's too many to test them all (63,488), so we choose 1,000 at random.
-internal val tripleByteChars: Iterable<Char> = buildSet {
+internal val tripleByteOutputChars: Iterable<Char> = buildSet {
     // Always include the upper & lower bounds of the 3-byte char range.
     add('\u0800')
     add('\uFFFF')
@@ -25,13 +27,30 @@ internal val tripleByteChars: Iterable<Char> = buildSet {
 internal val samples = listOf(
     CharArray(size = 0),
     "mew-tea-f8".toCharArray(),
-    singleByteChars.toList().toCharArray().apply { shuffle(createReproducibleRandom()) },
-    doubleByteChars.toList().toCharArray().apply { shuffle(createReproducibleRandom()) },
-    tripleByteChars.toList().toCharArray().apply { shuffle(createReproducibleRandom()) },
-    (singleByteChars + doubleByteChars + tripleByteChars).toCharArray().apply { shuffle(createReproducibleRandom()) }
+    singleByteOutputChars.toList().toCharArray().apply { shuffle(createReproducibleRandom()) },
+    doubleByteOutputChars.toList().toCharArray().apply { shuffle(createReproducibleRandom()) },
+    tripleByteOutputChars.toList().toCharArray().apply { shuffle(createReproducibleRandom()) },
+    (singleByteOutputChars + doubleByteOutputChars + tripleByteOutputChars).toCharArray()
+        .apply { shuffle(createReproducibleRandom()) }
 )
 
-fun createReproducibleRandom() = Random(seed = "mew-tea-f8".hashCode())
+internal fun MutableList<Byte>.addAllBytesOf(char: Char) =
+    when (char) {
+        in '\u0001'..'\u007F' -> {
+            add1stOf1Bytes(char)
+        }
+
+        in '\u0080'..'\u07FF', '\u0000' -> {
+            add1stOf2Bytes(char)
+            add2ndOf2Bytes(char)
+        }
+
+        else -> {
+            add1stOf3Bytes(char)
+            add2ndOf3Bytes(char)
+            add3rdOf3Bytes(char)
+        }
+    }
 
 internal fun MutableList<Byte>.add1stOf1Bytes(char: Char) = add((char.code and 0x7F).toByte())
 

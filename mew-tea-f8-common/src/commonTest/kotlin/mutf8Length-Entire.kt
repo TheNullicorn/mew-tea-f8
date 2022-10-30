@@ -29,7 +29,7 @@ class EntireMutf8LengthTests {
     @JsName("C")
     fun `mutf8Length should count characters from U+0001 through U+007F as 1 byte each`() {
         // Test each character individually.
-        for (char in singleByteChars)
+        for (char in singleByteOutputChars)
             for (amount in 1..20) {
                 val chars = CharArray(size = amount) { char }
                 assertEquals(expected = amount.toLong(), actual = chars.mutf8Length)
@@ -37,16 +37,16 @@ class EntireMutf8LengthTests {
             }
 
         // Test all of those characters together.
-        val chars = singleByteChars.toList().toCharArray()
-        assertEquals(expected = singleByteChars.count().toLong(), actual = chars.mutf8Length)
-        assertEquals(expected = singleByteChars.count().toLong(), actual = chars.concatToString().mutf8Length)
+        val chars = singleByteOutputChars.toList().toCharArray()
+        assertEquals(expected = singleByteOutputChars.count().toLong(), actual = chars.mutf8Length)
+        assertEquals(expected = singleByteOutputChars.count().toLong(), actual = chars.concatToString().mutf8Length)
     }
 
     @Test
     @JsName("D")
     fun `mutf8Length should count characters from U+0080 through U+07FF as 2 bytes each`() {
         // Test each character individually.
-        for (char in doubleByteChars)
+        for (char in doubleByteOutputChars)
             for (amount in 1..20) {
                 val chars = CharArray(size = amount) { char }
                 assertEquals(expected = 2L * amount, actual = chars.mutf8Length)
@@ -54,16 +54,16 @@ class EntireMutf8LengthTests {
             }
 
         // Test all of those characters together.
-        val chars = doubleByteChars.toList().toCharArray()
-        assertEquals(expected = 2L * doubleByteChars.count(), actual = chars.mutf8Length)
-        assertEquals(expected = 2L * doubleByteChars.count(), actual = chars.concatToString().mutf8Length)
+        val chars = doubleByteOutputChars.toList().toCharArray()
+        assertEquals(expected = 2L * doubleByteOutputChars.count(), actual = chars.mutf8Length)
+        assertEquals(expected = 2L * doubleByteOutputChars.count(), actual = chars.concatToString().mutf8Length)
     }
 
     @Test
     @JsName("E")
     fun `mutf8Length should count characters from U+0800 through U+FFFF as 3 bytes each`() {
         // Test each character individually.
-        for (char in tripleByteChars)
+        for (char in tripleByteOutputChars)
             for (amount in 1..20) {
                 val chars = CharArray(size = amount) { char }
                 assertEquals(expected = 3L * amount, actual = chars.mutf8Length)
@@ -71,18 +71,18 @@ class EntireMutf8LengthTests {
             }
 
         // Test all of those characters together.
-        val chars = tripleByteChars.toList().toCharArray()
-        assertEquals(expected = 3L * tripleByteChars.count(), actual = chars.mutf8Length)
-        assertEquals(expected = 3L * tripleByteChars.count(), actual = chars.concatToString().mutf8Length)
+        val chars = tripleByteOutputChars.toList().toCharArray()
+        assertEquals(expected = 3L * tripleByteOutputChars.count(), actual = chars.mutf8Length)
+        assertEquals(expected = 3L * tripleByteOutputChars.count(), actual = chars.concatToString().mutf8Length)
     }
 
     @Test
     @JsName("F")
     fun `mutf8Length should correctly calculate the length of strings with characters of varying lengths in bytes`() {
-        val chars = (singleByteChars + doubleByteChars + tripleByteChars).toCharArray()
+        val chars = (singleByteOutputChars + doubleByteOutputChars + tripleByteOutputChars).toCharArray()
         chars.shuffle()
 
-        val expectedLength = singleByteChars.count() + (2L * doubleByteChars.count()) + (3L * tripleByteChars.count())
+        val expectedLength = singleByteOutputChars.count() + (2L * doubleByteOutputChars.count()) + (3L * tripleByteOutputChars.count())
         assertEquals(expectedLength, actual = chars.mutf8Length)
         assertEquals(expectedLength, actual = chars.concatToString().mutf8Length)
     }
