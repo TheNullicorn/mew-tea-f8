@@ -1,0 +1,20 @@
+# Automatically convert text files with CRLF line endings (\r\n) to LF (\n).
+*              text=auto
+
+# Project Metadata
+*.txt          text
+*.md           text
+*.markdown     text
+*.editorconfig text
+
+# Gradle & Project Configuration
+gradlew        text
+*.bat          text
+*.toml         text
+*.properties   text
+*.jar          binary
+
+# Source Code & API Definitions
+*.kt           text
+*.kts          text
+*.api          text
