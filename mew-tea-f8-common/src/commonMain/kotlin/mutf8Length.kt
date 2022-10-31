@@ -16,7 +16,7 @@ import kotlin.jvm.JvmName
  *
  * @receiver The character to check the Modified UTF-8 length of.
  */
-val Char.mutf8Length: Long
+val Char.mutf8Length: Int
     get() = when (this.code.toShort().countLeadingZeroBits()) {
         // Characters in the range `'\u0001' .. '\u007F'` are encoded using `1` byte
         15, 14, 13, 12, 11, 10, 9 -> 1
