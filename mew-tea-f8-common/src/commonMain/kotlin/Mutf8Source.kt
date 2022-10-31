@@ -39,12 +39,13 @@ abstract class Mutf8Source {
      * @param[mutf8Length] The number of bytes used to encode the string. This must be at least `0` and at most
      * `65535` ([UShort.MAX_VALUE]).
      *
-     * Unless an [EOFException] is thrown, this is exactly the number of bytes that are [read][readBytes] by this
-     * method.
+     * Unless an [EOFException] or [IOException] is thrown, this is exactly the number of bytes that are
+     * [read][readBytes] by this method.
      *
      * @throws[IllegalArgumentException] if [mutf8Length] is negative.
      * @throws[IllegalArgumentException] if [mutf8Length] exceeds [UShort.MAX_VALUE].
      * @throws[EOFException] if there are fewer bytes left in the source than expected by the [mutf8Length].
+     * @throws[EOFException] if [readBytes] returns fewer bytes than expected by the [mutf8Length].
      * @throws[IOException] if the underlying source of bytes cannot be accessed.
      * @throws[IOException] if [readBytes] returns *more* bytes than expected by the [mutf8Length].
      * @throws[UTFDataFormatException] if a 2-byte character starts on the last byte of the string, meaning the second
@@ -86,8 +87,8 @@ abstract class Mutf8Source {
      * @param[mutf8Length] The number of bytes used to encode the string. This must be at least `0` and at most
      * `65535` ([UShort.MAX_VALUE]).
      *
-     * Unless an [EOFException] is thrown, this is exactly the number of bytes that are [read][readBytes] by this
-     * method.
+     * Unless an [EOFException] or [IOException] is thrown, this is exactly the number of bytes that are
+     * [read][readBytes] by this method.
      * @return an array of all the characters that were read, in order. Note that its [size][CharArray.size]...
      * - will never exceed [mutf8Length]
      * - will only be `0` if [mutf8Length] is also `0`
@@ -96,6 +97,7 @@ abstract class Mutf8Source {
      * @throws[IllegalArgumentException] if [mutf8Length] is negative.
      * @throws[IllegalArgumentException] if [mutf8Length] exceeds [UShort.MAX_VALUE].
      * @throws[EOFException] if there are fewer bytes left in the source than expected by the [mutf8Length].
+     * @throws[EOFException] if [readBytes] returns fewer bytes than expected by the [mutf8Length].
      * @throws[IOException] if the underlying source of bytes cannot be accessed.
      * @throws[IOException] if [readBytes] returns *more* bytes than expected by the [mutf8Length].
      * @throws[UTFDataFormatException] if a 2-byte character starts on the last byte of the string, meaning the second
@@ -139,8 +141,8 @@ abstract class Mutf8Source {
      * @param[mutf8Length] The number of bytes used to encode the string. This must be at least `0` and at most
      * `65535` ([UShort.MAX_VALUE]).
      *
-     * Unless an [EOFException] is thrown, this is exactly the number of bytes that are [read][readBytes] by this
-     * method.
+     * Unless an [EOFException] or [IOException] is thrown, this is exactly the number of bytes that are
+     * [read][readBytes] by this method.
      * @return a string of all the characters that were read, in order. Note that its [length][String.length]...
      * - will never exceed [mutf8Length]
      * - will only be `0` if [mutf8Length] is also `0`
@@ -149,6 +151,7 @@ abstract class Mutf8Source {
      * @throws[IllegalArgumentException] if [mutf8Length] is negative.
      * @throws[IllegalArgumentException] if [mutf8Length] exceeds [UShort.MAX_VALUE].
      * @throws[EOFException] if there are fewer bytes left in the source than expected by the [mutf8Length].
+     * @throws[EOFException] if [readBytes] returns fewer bytes than expected by the [mutf8Length].
      * @throws[IOException] if the underlying source of bytes cannot be accessed.
      * @throws[IOException] if [readBytes] returns *more* bytes than expected by the [mutf8Length].
      * @throws[UTFDataFormatException] if a 2-byte character starts on the last byte of the string, meaning the second
@@ -203,6 +206,7 @@ abstract class Mutf8Source {
      * @throws[IllegalArgumentException] if [mutf8Length] is negative.
      * @throws[IllegalArgumentException] if [mutf8Length] exceeds [UShort.MAX_VALUE].
      * @throws[EOFException] if there are fewer bytes left in the source than expected by the [mutf8Length].
+     * @throws[EOFException] if [readBytes] returns fewer bytes than expected by the [mutf8Length].
      * @throws[IOException] if the underlying source of bytes cannot be accessed.
      * @throws[IOException] if [readBytes] returns *more* bytes than expected by the [mutf8Length].
      * @throws[UTFDataFormatException] if a 2-byte character starts on the last byte of the string, meaning the second
