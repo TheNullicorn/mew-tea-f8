@@ -57,6 +57,10 @@ abstract class Mutf8Source {
      * @throws[UTFDataFormatException] if the first byte of a character has its most-significant bit set (`1`) and its
      * second-most-significant bit unset (`0`), which is only expected for the second and third bytes of characters. In
      * other words, the byte's bits follow the pattern `10xx xxxx`, where each `x` can be either a `1` or `0`.
+     * @throws[UTFDataFormatException] if the second and/or third byte of a character does not have its most-significant
+     * bit set (`1`) and its second-most-significant bit unset (`0`), which is required for the second and third bytes
+     * of 2-byte and 3-byte characters. In other words, either byte's bits don't follow the pattern `10xx xxxx`, where
+     * each `x` can be either a `1` or `0`.
      */
     @Throws(IOException::class, EOFException::class, UTFDataFormatException::class)
     fun readToAppendable(mutf8Length: Int, destination: Appendable) {
@@ -104,6 +108,10 @@ abstract class Mutf8Source {
      * @throws[UTFDataFormatException] if the first byte of a character has its most-significant bit set (`1`) and its
      * second-most-significant bit unset (`0`), which is only expected for the second and third bytes of characters. In
      * other words, the byte's bits follow the pattern `10xx xxxx`, where each `x` can be either a `1` or `0`.
+     * @throws[UTFDataFormatException] if the second and/or third byte of a character does not have its most-significant
+     * bit set (`1`) and its second-most-significant bit unset (`0`), which is required for the second and third bytes
+     * of 2-byte and 3-byte characters. In other words, either byte's bits don't follow the pattern `10xx xxxx`, where
+     * each `x` can be either a `1` or `0`.
      */
     @Throws(IOException::class, EOFException::class, UTFDataFormatException::class)
     fun readToArray(mutf8Length: Int): CharArray {
@@ -153,6 +161,10 @@ abstract class Mutf8Source {
      * @throws[UTFDataFormatException] if the first byte of a character has its most-significant bit set (`1`) and its
      * second-most-significant bit unset (`0`), which is only expected for the second and third bytes of characters. In
      * other words, the byte's bits follow the pattern `10xx xxxx`, where each `x` can be either a `1` or `0`.
+     * @throws[UTFDataFormatException] if the second and/or third byte of a character does not have its most-significant
+     * bit set (`1`) and its second-most-significant bit unset (`0`), which is required for the second and third bytes
+     * of 2-byte and 3-byte characters. In other words, either byte's bits don't follow the pattern `10xx xxxx`, where
+     * each `x` can be either a `1` or `0`.
      */
     @Throws(IOException::class, EOFException::class, UTFDataFormatException::class)
     fun readToString(mutf8Length: Int): String {
@@ -203,6 +215,10 @@ abstract class Mutf8Source {
      * @throws[UTFDataFormatException] if the first byte of a character has its most-significant bit set (`1`) and its
      * second-most-significant bit unset (`0`), which is only expected for the second and third bytes of characters. In
      * other words, the byte's bits follow the pattern `10xx xxxx`, where each `x` can be either a `1` or `0`.
+     * @throws[UTFDataFormatException] if the second and/or third byte of a character does not have its most-significant
+     * bit set (`1`) and its second-most-significant bit unset (`0`), which is required for the second and third bytes
+     * of 2-byte and 3-byte characters. In other words, either byte's bits don't follow the pattern `10xx xxxx`, where
+     * each `x` can be either a `1` or `0`.
      */
     @Throws(IOException::class, EOFException::class, UTFDataFormatException::class)
     private inline fun read(mutf8Length: Int, begin: () -> Unit, consume: (Char) -> Unit) {
