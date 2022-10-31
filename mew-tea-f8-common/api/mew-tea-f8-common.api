@@ -1,4 +1,5 @@
 public final class me/nullicorn/mewteaf8/Mutf8Length {
+	public static final fun of (C)I
 	public static final fun of (Ljava/lang/CharSequence;)J
 	public static final fun of (Ljava/lang/CharSequence;II)J
 	public static final fun of ([C)J
