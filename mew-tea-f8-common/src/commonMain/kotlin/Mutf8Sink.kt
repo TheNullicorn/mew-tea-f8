@@ -303,6 +303,7 @@ abstract class Mutf8Sink(private val bytesPerWrite: Int = 1024) {
      * @throws[IOException] if the [buffer] is flushed but an I/O issue occurs while trying to do so.
      */
     @Throws(IOException::class)
+    @Suppress("NOTHING_TO_INLINE", "KotlinRedundantDiagnosticSuppress")
     private inline fun writeByte(index: Int, value: Int): Int {
         var i = index
 
@@ -327,6 +328,7 @@ abstract class Mutf8Sink(private val bytesPerWrite: Int = 1024) {
      * @throws[IOException] if an I/O issue occurs while trying to write the [buffer]'s bytes.
      */
     @Throws(IOException::class)
+    @Suppress("NOTHING_TO_INLINE", "KotlinRedundantDiagnosticSuppress")
     private inline fun flush(untilIndex: Int) {
         if (untilIndex != 0)
             writeBytes(buffer, untilIndex)
