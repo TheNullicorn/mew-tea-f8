@@ -233,6 +233,17 @@ class ReadToStringAndCharArrayAndAppendableExceptionsTests {
                         })
     }
 
+    /**
+     * Asserts that when [readBytes][Mutf8Source.readBytes] throws a specific type of exception, that same exception
+     * makes its way back to the caller of [each][assertAllMethodsFailWith] `readTo*()` method rather than being caught
+     * and handled by it.
+     *
+     * @param[E] The [Exception] class that [readBytes][Mutf8Source.readBytes] will throw for this test.
+     * @param[exceptionConstructor] A reference to [E]'s constructor, which accepts a single `message: String` as its
+      * parameter. For example, `::IOException`.
+     *
+     * @throws[AssertionError] if any `readTo*()` method catches the exception or throws a different type of exception.
+     */
     private inline fun <reified E : Exception> assertExceptionIsPropagatedFromReadBytes(crossinline exceptionConstructor: (message: String) -> E) {
         // Create a `Mutf8Source` that always throws the exception `E` when read from.
         val createSourceThatAlwaysThrows: () -> Mutf8Source = {
@@ -248,6 +259,22 @@ class ReadToStringAndCharArrayAndAppendableExceptionsTests {
             assertAllMethodsFailWith<E>(mutf8Length, createSourceThatAlwaysThrows)
     }
 
+    /**
+     * Asserts that each of [Mutf8Source]'s `readTo*()` methods throw a specific type of exception.
+     *
+     * The methods that will be tested are:
+     * - [Mutf8Source.readToArray]
+     * - [Mutf8Source.readToString]
+     * - [Mutf8Source.readToAppendable]
+     *
+     * @param[mutf8Length] The value passed to each method for the `mutf8Length` parameter. This value is allowed to be
+     * invalid if the source's response to that is what's being tested with this assertion.
+     * @param[createSource] A function that returns a new [Mutf8Source] to call one of the methods on. This will be
+     * run once for each tested method to ensure that a source's state doesn't interfere with the behaviour of any
+     * method.
+     *
+     * @throws[AssertionError] if any of the tested methods complete without throwing [E].
+     */
     private inline fun <reified E : Exception> assertAllMethodsFailWith(
         mutf8Length: Int,
         crossinline createSource: () -> Mutf8Source
@@ -257,9 +284,38 @@ class ReadToStringAndCharArrayAndAppendableExceptionsTests {
         createSource().run { assertFailsWith<E> { readToAppendable(mutf8Length, destination = StringBuilder()) } }
     }
 
+    /**
+     * Asserts that each of [Mutf8Source]'s `readTo*()` methods complete without throwing any exceptions.
+     *
+     * The methods that will be tested are:
+     * - [Mutf8Source.readToArray]
+     * - [Mutf8Source.readToString]
+     * - [Mutf8Source.readToAppendable]
+     *
+     * @param[mutf8Length] The value passed to each method for the `mutf8Length` parameter. This should always be valid
+     * because the methods are expected not to throw, which they will/should if it's invalid.
+     * @param[createSource] A function that returns a new [Mutf8Source] to call one of the methods on. This will be
+     * run once for each tested method to ensure that a source's state doesn't interfere with the behaviour of any
+     * method. Namely, once one method read's a source's bytes, there will be none or less for the next method to read
+     * which otherwise could cause an unintentional exception that's unrelated to the test.
+     *
+     * @throws[AssertionError] if any of the tested methods throw an exception, or if [createSource] throws its own
+     * [AssertionError] for whatever reason.
+     */
     private inline fun assertAllMethodsSucceed(mutf8Length: Int, crossinline createSource: () -> Mutf8Source) {
-        createSource().readToArray(mutf8Length)
-        createSource().readToString(mutf8Length)
-        createSource().readToAppendable(mutf8Length, destination = StringBuilder())
+        try {
+            createSource().readToArray(mutf8Length)
+            createSource().readToString(mutf8Length)
+            createSource().readToAppendable(mutf8Length, destination = StringBuilder())
+
+        } catch (cause: AssertionError) {
+            // If it's already an `AssertionError` for whatever reason, don't wrap it.
+            throw cause
+
+        } catch (cause: Throwable) {
+            // Otherwise, print the stack & throw an `AssertionError` with a little context to mark the test as failed.
+            cause.printStackTrace()
+            throw AssertionError("Expected no exception to be thrown, but ${cause::class.simpleName} was")
+        }
     }
 }

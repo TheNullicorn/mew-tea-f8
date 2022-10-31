@@ -9,9 +9,13 @@ import kotlin.test.assertTrue
 // be decoded if it's just 1 too.
 internal val singleByteInputChars: Iterable<Char> = '\u0000'..'\u007F'
 
-// Characters that can be represented using 2 bytes, including ones that only need 1 byte to be encoded.
+// Characters that can be represented using 2 bytes, including ones that are usually encoded as just 1 byte but can be
+// still be decoded as 2.
 internal val doubleByteInputChars: Iterable<Char> = '\u0000' .. '\u07FF'
 
+// Some characters that can be represented using 3 bytes, including ones that are usually encoded as just 1 or 2 bytes
+// but can be still be decoded as 3. We only include 1000 actual 3-byte characters because the range is way too wide to
+// test them all.
 internal val tripleByteInputChars: Iterable<Char> = ('\u0000' .. '\u07FF') + buildSet {
     // Always include the upper & lower bounds of the 3-byte char range.
     add('\u0800')
@@ -25,9 +29,17 @@ internal val tripleByteInputChars: Iterable<Char> = ('\u0000' .. '\u07FF') + bui
     }
 }
 
-internal operator fun ByteListMutf8Source.Companion.invoke(populate: MutableList<Byte>.() -> Unit) =
+/**
+ * Creates a [ByteListMutf8Source] whose [bytes][ByteListMutf8Source.bytes] are initialized by the supplied [populate]
+ * function.
+ */
+internal inline operator fun ByteListMutf8Source.Companion.invoke(populate: MutableList<Byte>.() -> Unit) =
     ByteListMutf8Source(bytes = ArrayList<Byte>().apply(populate))
 
+/**
+ * A [ByteListMutf8Source] whose [bytes] come from an in-memory [List] that's supplied on construction. This is intended
+ * purely for testing purposes.
+ */
 internal class ByteListMutf8Source(private val bytes: List<Byte> = emptyList()) : Mutf8Source() {
 
     // Allows us to create "static" extension functions off this class.
