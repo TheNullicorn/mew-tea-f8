@@ -96,6 +96,8 @@ class WriteFromArrayAndSequenceExceptionsTests {
             override fun writeBytes(bytes: ByteArray, untilIndex: Int) {
                 throw IOException("This should reach the test; it should not be caught or handled by writeFrom*()")
             }
+            override fun writeLength(mutf8Length: Int) =
+                throw UnsupportedOperationException("Not the method being tested")
         }
 
         // Exclude empty samples because they don't have anything to write, so `writeBytes()` will never be called.
@@ -119,8 +121,7 @@ class WriteFromArrayAndSequenceExceptionsTests {
         val tripleByteChar = tripleByteOutputChars.first()
 
         fun testWithChar(char: Char) {
-            val mutf8Length = char.mutf8Length.toInt()
-
+            val mutf8Length = char.mutf8Length
             val justShortEnoughArray = StringBuilder(char.toString().repeat(maxMutf8Length / mutf8Length))
                 .also {
                     while (it.mutf8Length < maxMutf8Length)

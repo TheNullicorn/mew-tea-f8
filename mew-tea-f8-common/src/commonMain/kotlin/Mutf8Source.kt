@@ -10,10 +10,31 @@ package me.nullicorn.mewteaf8
  *
  * All the aforementioned methods require the `mutf8Length` to be known in advance, which is the total number of bytes
  * that the characters are encoded in. In standard Modified UTF-8 data, the `mutf8Length` is encoded as an unsigned,
- * big-endian, 16-bit integer, and is encoded immediately before the first character's bytes, if any. Otherwise, its
- * 2 bytes are both `0`, and no character bytes follow them.
+ * big-endian, 16-bit integer, and is encoded immediately before the first character's bytes, if any. It can be read
+ * using [readLength].
  */
 abstract class Mutf8Source {
+
+    /**
+     * Reads the length of a Modified UTF-8 string from the source of data.
+     *
+     * This is done by reading the next `2` bytes from the underlying source of data and combining them in big-endian
+     * order into an unsigned 16-bit integer. That is, if `byte1` and `byte2` are the first and second bytes read
+     * respectively, and both are [Byte]s:
+     * ```kotlin
+     * (byte1.toInt() and 0xFF shl 8) or (byte2.toInt() and 0xFF)
+     * ```
+     *
+     * The returned value is an [Int], though only the 16 least-significant bits represent the value; the rest of the
+     * bits are unset (`0`). Thus, the returned value will always be in the range `0 .. 65535`.
+     *
+     * @return the `mutf8Length` value read from the source.
+     *
+     * @throws[EOFException] if there are fewer than `2` bytes left in the underlying source.
+     * @throws[IOException] if the underlying source of bytes cannot be accessed.
+     */
+    @Throws(IOException::class, EOFException::class)
+    abstract fun readLength(): Int
 
     /**
      * Reads a specific [amount] of bytes from the underlying source of data, and returns those bytes, in order, as a

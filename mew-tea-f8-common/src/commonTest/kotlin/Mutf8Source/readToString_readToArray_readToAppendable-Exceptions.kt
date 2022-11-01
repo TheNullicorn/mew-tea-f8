@@ -64,6 +64,7 @@ class ReadToStringAndCharArrayAndAppendableExceptionsTests {
                     assertTrue(amount != 0, "Can't return any fewer bytes than 0 for the test")
                     return ByteArray(size = amount - 1, init = { singleCharByte })
                 }
+                override fun readLength() = throw UnsupportedOperationException("Not the method being tested")
             }
         }
 
@@ -85,6 +86,7 @@ class ReadToStringAndCharArrayAndAppendableExceptionsTests {
                     assertTrue(amount != Int.MAX_VALUE, "Can't return too many bytes for test without overflowing")
                     return ByteArray(size = amount + 1, init = { singleCharByte })
                 }
+                override fun readLength() = throw UnsupportedOperationException("Not the method being tested")
             }
         }
 
@@ -250,6 +252,8 @@ class ReadToStringAndCharArrayAndAppendableExceptionsTests {
             object : Mutf8Source() {
                 override fun readBytes(amount: Int) =
                     throw exceptionConstructor("This should reach the test; readTo*() should not catch or handle it")
+
+                override fun readLength() = throw UnsupportedOperationException("Not the method being tested")
             }
         }
 

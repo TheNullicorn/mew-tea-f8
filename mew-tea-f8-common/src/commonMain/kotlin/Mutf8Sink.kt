@@ -34,6 +34,32 @@ abstract class Mutf8Sink(private val bytesPerWrite: Int = 1024) {
     private var buffer: ByteArray = EMPTY_BUFFER
 
     /**
+     * Writes the length of a Modified UTF-8 string to the sink's underlying destination.
+     *
+     * This is done by taking the [mutf8Length]'s 16 least-significant bits and splitting them into `2` bytes, which
+     * are then written in big-endian order. That is, if `writeByte()` is a method for writing an individual byte to the
+     * sink:
+     * ```kotlin
+     * writeByte((mutf8Length shr 8).toByte())
+     * writeByte(mutf8Length.toByte())
+     * ```
+     *
+     * The [mutf8Length] parameter is an [Int], though only the 16 least-significant bits represent the value. Every
+     * other bit should be unset or else an [IllegalArgumentException] will be thrown. Thus, [mutf8Length] must be in
+     * the range `0 .. 65535`.
+     *
+     * @param[mutf8Length] The length of the string in question, in bytes.
+     *
+     * @throws[IllegalArgumentException] if [mutf8Length] is negative.
+     * @throws[IllegalArgumentException] if [mutf8Length] exceeds `65535`.
+     * @throws[IOException] if an I/O issue occurs while trying to write either of the bytes.
+     *
+     * @see[me.nullicorn.mewteaf8.mutf8Length]
+     */
+    @Throws(IOException::class)
+    abstract fun writeLength(mutf8Length: Int)
+
+    /**
      * Writes all [bytes] in an array whose indices are less than [untilIndex] to the sink's underlying destination, in
      * order.
      *
@@ -52,7 +78,7 @@ abstract class Mutf8Sink(private val bytesPerWrite: Int = 1024) {
      * destination.
      *
      * This method does not write the 2-byte "UTF length" that comes before standard Modified UTF-8 strings. That must
-     * be written separately, if applicable.
+     * be written [separately][writeLength] if needed.
      *
      * The "range" is defined as a [startIndex] and [endIndex], which behave the same as the first and second operands
      * of Kotlin's infix [until] function. Both indexes must be at least `0`, and the [startIndex] cannot be greater
@@ -92,7 +118,7 @@ abstract class Mutf8Sink(private val bytesPerWrite: Int = 1024) {
      * destination.
      *
      * This method does not write the 2-byte "UTF length" that comes before standard Modified UTF-8 strings. That must
-     * be written separately, if applicable.
+     * be written [separately][writeLength] if needed.
      *
      * The "range" is defined as a [startIndex] and [endIndex], which behave the same as the first and second operands
      * of Kotlin's infix [until] function. Both indexes must be at least `0`, and the [startIndex] cannot be greater

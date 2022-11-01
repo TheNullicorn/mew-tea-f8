@@ -60,4 +60,13 @@ internal class ByteListMutf8Source(private val bytes: List<Byte> = emptyList()) 
         index += amount
         return bytes.subList(fromIndex = firstIndex, toIndex = index).toByteArray()
     }
+
+    override fun readLength(): Int {
+        if (index + 2 > bytes.size)
+            throw EOFException("2 bytes were expected, but only ${bytes.size - index} are left")
+
+        val byte1 = bytes[index++].toInt() and 0xFF
+        val byte2 = bytes[index++].toInt() and 0xFF
+        return (byte1 shl 8) or byte2
+    }
 }
