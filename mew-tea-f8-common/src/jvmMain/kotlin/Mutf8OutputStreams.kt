@@ -16,7 +16,7 @@ private const val MAX_MUTF8_LENGTH = 65535
  * In code, that would be:
  * ```kotlin
  * val mutf8Length = characters.mutf8Length(startIndex, endIndex)
- * val sink StreamMutf8Sink(stream = this, bytesPerWrite)
+ * val sink = StreamMutf8Sink(stream = this, bytesPerWrite)
  * sink.writeLength(mutf8Length)
  * sink.writeFromSequence(characters, startIndex, endIndex)
  * ```
@@ -50,7 +50,7 @@ fun OutputStream.writeMutf8Sequence(
  * In code, that would be:
  * ```kotlin
  * val mutf8Length = characters.mutf8Length(startIndex = range.first, endIndex = range.last + 1)
- * val sink StreamMutf8Sink(stream = this, bytesPerWrite)
+ * val sink = StreamMutf8Sink(stream = this, bytesPerWrite)
  * sink.writeLength(mutf8Length)
  * sink.writeFromSequence(characters, range)
  * ```
@@ -78,7 +78,7 @@ fun OutputStream.writeMutf8Sequence(
  * In code, that would be:
  * ```kotlin
  * val mutf8Length = characters.mutf8Length(startIndex, endIndex)
- * val sink StreamMutf8Sink(stream = this, bytesPerWrite)
+ * val sink = StreamMutf8Sink(stream = this, bytesPerWrite)
  * sink.writeLength(mutf8Length)
  * sink.writeFromArray(characters, startIndex, endIndex)
  * ```
@@ -112,7 +112,7 @@ fun OutputStream.writeMutf8Array(
  * In code, that would be:
  * ```kotlin
  * val mutf8Length = characters.mutf8Length(startIndex = range.first, endIndex = range.last + 1)
- * val sink StreamMutf8Sink(stream = this, bytesPerWrite)
+ * val sink = StreamMutf8Sink(stream = this, bytesPerWrite)
  * sink.writeLength(mutf8Length)
  * sink.writeFromArray(characters, range)
  * ```
