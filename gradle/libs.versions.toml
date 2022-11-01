@@ -2,6 +2,7 @@
 kotlin = "1.7.20"
 kotlin-benchmark = "0.4.4"
 okio = "3.2.0"
+ktor = "2.1.3"
 intellij-settings = "1.1.6"
 binary-compatibility = "0.11.1"
 
@@ -14,4 +15,5 @@ binary-compatibility = { id = 'org.jetbrains.kotlinx.binary-compatibility-valida
 
 [libraries]
 okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
+ktor-io = { module = "io.ktor:ktor-io", version.ref = "ktor" }
 kotlin-benchmark = { module = "org.jetbrains.kotlinx:kotlinx-benchmark-runtime", version.ref = "kotlin-benchmark" }
