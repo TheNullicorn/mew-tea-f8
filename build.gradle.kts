@@ -6,7 +6,6 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    alias(libs.plugins.kotlin.multiplatform) apply false
     alias(libs.plugins.binary.compatibility) apply false
     alias(libs.plugins.intellij.settings) apply false
 }
