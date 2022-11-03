@@ -1,0 +1,42 @@
+name: Test on All Platforms
+
+on:
+  push:
+    branches: [ 'main' ]
+
+  pull_request:
+    types: [ 'opened', 'reopened', 'ready_for_review', 'synchronize' ]
+
+  workflow_dispatch:
+  # No configuration needed.
+
+jobs:
+  test-all:
+    name: Test All Targets with Gradle
+
+    strategy:
+      matrix:
+        os: [ 'ubuntu-latest', 'windows-latest', 'macos-latest' ]
+
+    runs-on: ${{ matrix.os }}
+    env:
+      MEW_TARGET: ${{ startsWith(matrix.os, 'ubuntu') && 'all' || 'native' }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up JDK 8
+        uses: actions/setup-java@v3
+        with:
+          java-version: '8'
+          distribution: 'zulu'
+          cache: 'gradle'
+
+      - name: Validate Gradle Wrapper
+        uses: gradle/wrapper-validation-action@v1
+
+      - name: Verify, Compile, Test
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: wrapper
+          arguments: check
