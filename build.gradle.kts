@@ -1,4 +1,3 @@
-import kotlinx.validation.ApiValidationExtension
 import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.jetbrains.gradle.ext.packagePrefix
 import org.jetbrains.gradle.ext.settings
@@ -38,10 +37,5 @@ subprojects {
                     }
             }
         }
-    }
-
-    configure<ApiValidationExtension> {
-        ignoredPackages += "${rootPackage}.internal"
-        nonPublicMarkers += "${rootPackage}.internal.InternalMutf8Api"
     }
 }
