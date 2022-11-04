@@ -254,7 +254,7 @@ class WriteFromArrayAndSequenceExceptionsTests {
      * @param[endIndex] The value of the `endIndex` parameter passed to the [sink]'s methods, or for methods that take
      * an [IntRange], the second (right) operand of the [until] function.
      */
-    private inline fun assertAllMethodsSucceed(
+    private fun assertAllMethodsSucceed(
         sink: Mutf8Sink,
         chars: CharArray,
         startIndex: Int = 0,
