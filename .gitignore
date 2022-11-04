@@ -3,7 +3,7 @@
 
 # IGNORE (Gradle)
 **/build/
-/.gradle/
+**/.gradle/
 
 # IGNORE (JetBrains IDEs)
 /.idea/
