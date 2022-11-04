@@ -36,9 +36,8 @@ fun KotlinMultiplatformExtension.configureSourceSetsForMewTeaF8(project: Project
                 dependsOn(nonJvmMain)
             }
 
-            // WASM is (kind-of?) a native target, but it can be built on any platform so we include it here.
             for (wasmSourceSet in getMainSourceSetsForPlatform(KotlinPlatformType.wasm))
-                wasmSourceSet.dependsOn(nativeMain)
+                wasmSourceSet.dependsOn(nonJvmMain)
         }
 
         // If we're building targets that can only be built on the current platform, then configure those.

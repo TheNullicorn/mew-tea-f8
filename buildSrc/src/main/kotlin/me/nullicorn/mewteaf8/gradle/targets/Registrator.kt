@@ -3,8 +3,10 @@ package me.nullicorn.mewteaf8.gradle.targets
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinTargetContainerWithPresetFunctions
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetDsl
+
+typealias TargetRegistrator = () -> Any
 
 /**
  * Registers the available Kotlin targets [configured][mewTeaF8BuildTargets] for the [project]'s current environment.
@@ -12,71 +14,99 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetDsl
  * This does not necessarily register *every* target that fits the criteria, especially obscure targets, but it does
  * register the most common ones for that environment.
  *
+ * If any targets should not be registered, such as those that aren't supported by a dependency of ours, they should be
+ * passed in via the [excludedTargets] parameter.
+ *
  * @param[project] The project whose [configured][mewTeaF8BuildTargets] targets will be registered.
- * @param[exceptIf] A predicate that unregisters all targets that match it, such as those not supported by a dependency
- * of the project, meaning we can't support them either for that module.
+ * @param[excludedTargets] Any targets that should not be registered. Each element should be a reference to the target's
+ * registration method that doesn't require any parameters.
+ *
+ * For example, `::jvm`, which is a reference to the overload of
+ * [kotlin.jvm()][KotlinTargetContainerWithPresetFunctions.jvm] without any parameters.
  */
 fun KotlinMultiplatformExtension.registerTargetsForMewTeaF8(
     project: Project,
-    exceptIf: (KotlinTarget) -> Boolean = { false }
+    vararg excludedTargets: TargetRegistrator
 ) {
     val environment = project.mewTeaF8BuildTargets
 
     if (environment.includesCommon)
-        registerCommonTargets()
+        registerCommonTargets(*excludedTargets)
 
     if (environment.includesNative)
-        registerNativeTargets()
-
-    // Remove any targets (& their source-sets) that are excluded by the `exceptIf` predicate.
-    val targetsToRemove = targets.filter(exceptIf)
-    for (target in targetsToRemove) {
-        targets.remove(target)
-        sourceSets.removeIf { it.name.startsWith(target.name) }
-    }
+        registerNativeTargets(project, *excludedTargets)
 }
 
-private fun KotlinMultiplatformExtension.registerCommonTargets() {
+private fun KotlinMultiplatformExtension.registerCommonTargets(vararg excludedTargets: TargetRegistrator) {
     // Target the JVM (Kotlin, Java, etc).
-    jvm {
-        // Target Java 8.
-        val targetVersion = JavaVersion.VERSION_1_8.toString()
-        compilations.all {
-            kotlinOptions.jvmTarget = targetVersion
+    if (::jvm !in excludedTargets)
+        jvm {
+            // Target Java 8.
+            val targetVersion = JavaVersion.VERSION_1_8.toString()
+            compilations.all {
+                kotlinOptions.jvmTarget = targetVersion
+            }
         }
-    }
 
-    // Target the new (IR) and legacy compiler backends for Kotlin/JS.
-    js(BOTH) {
-        // Target both client-side (Browser) & server-side (Node.js) JavaScript.
-        val subTargets: List<(KotlinJsSubTargetDsl.() -> Unit) -> Unit> =
-            listOf(::nodejs, ::browser)
 
-        // Register & configure each target listed above.
-        for (jsTarget in subTargets) {
-            jsTarget {
-                testTask {
-                    useMocha {
-                        // Disable the time limit on tests.
-                        timeout = "0s"
+    if (::js !in excludedTargets)
+        js(BOTH) {
+            // Target both client-side (Browser) & server-side (Node.js) JavaScript.
+            val subTargets: List<(KotlinJsSubTargetDsl.() -> Unit) -> Unit> =
+                listOf(::nodejs, ::browser)
+
+            // Register & configure each target listed above.
+            for (jsTarget in subTargets) {
+                jsTarget {
+                    testTask {
+                        useMocha {
+                            // Disable the time limit on tests.
+                            timeout = "0s"
+                        }
                     }
                 }
             }
         }
-    }
 
-    // Target WebAssembly. Even though it's a "native" target, it's platform-independent, so we build it along with
-    // JVM and JS.
-    wasm32()
+    // Target WebAssembly.
+    if (::wasm !in excludedTargets)
+        wasm {
+            // Target Node.js, Browser JS, and D8 (V8 Shell) JS
+            val subTargets: List<(KotlinJsSubTargetDsl.() -> Unit) -> Unit> =
+                listOf(::nodejs, ::browser, ::d8)
+
+            // Register & configure each target listed above.
+            for (wasmTarget in subTargets) {
+                wasmTarget {
+                    testTask {
+                        useMocha {
+                            // Disable the time limit on tests.
+                            timeout = "0s"
+                        }
+                    }
+                }
+            }
+        }
 }
 
-private fun KotlinMultiplatformExtension.registerNativeTargets() {
+private fun KotlinMultiplatformExtension.registerNativeTargets(
+    project: Project,
+    vararg excludedTargets: TargetRegistrator
+) {
     // A collection of method references to the functions that register each target, like `linuxX64()`.
-    val nativeTargets: MutableSet<() -> Any> = HashSet()
+    val nativeTargets: MutableSet<TargetRegistrator > = HashSet()
 
-    // Target Windows, macOS and Linux.
+    // Target 32-bit WebAssembly, regardless of the current platform.
+    nativeTargets += ::wasm32
+
+    // Target Windows, macOS,or Linux, whichever one of those the current OS is.
     val hostOs = System.getProperty("os.name")
     when {
+        hostOs.startsWith("Windows") -> {
+            nativeTargets += ::mingwX86
+            nativeTargets += ::mingwX64
+        }
+
         hostOs == "Linux" -> {
             nativeTargets += ::linuxX64
             nativeTargets += ::linuxArm32Hfp
@@ -112,12 +142,11 @@ private fun KotlinMultiplatformExtension.registerNativeTargets() {
             // targets += ::gladosArm64
         }
 
-        hostOs.startsWith("Windows") -> {
-            nativeTargets += ::mingwX86
-            nativeTargets += ::mingwX64
+        else -> {
+            project.logger.warn("Current OS is not known to support any platform-specific targets: \"$hostOs\"")
         }
     }
 
-    for (registerTarget in nativeTargets)
+    for (registerTarget in nativeTargets - excludedTargets)
         registerTarget()
 }

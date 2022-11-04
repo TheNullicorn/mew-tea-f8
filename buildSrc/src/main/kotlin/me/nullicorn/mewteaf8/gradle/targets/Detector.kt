@@ -1,6 +1,7 @@
 package me.nullicorn.mewteaf8.gradle.targets
 
-import me.nullicorn.mewteaf8.gradle.targets.MewTeaF8BuildTargets.*
+import me.nullicorn.mewteaf8.gradle.targets.MewTeaF8BuildTargets.COMMON_AND_NATIVE
+import me.nullicorn.mewteaf8.gradle.targets.MewTeaF8BuildTargets.values
 import org.gradle.api.Project
 
 /**
@@ -8,7 +9,7 @@ import org.gradle.api.Project
  *
  * The configured targets are searched for in the following places, in order:
  * 1. If the environment variable "`MEW_TARGET`" is set, that option is used
- * 2. If the Gradle property "`mew-tea-f8-target`" is set, that option is used
+ * 2. If the Gradle property "`mew-tea-f8.target`" is set, that option is used
  * 3. Otherwise, [MewTeaF8BuildTargets.COMMON_AND_NATIVE] is used by default
  *
  * The allowed options are:
@@ -49,7 +50,7 @@ private const val ENV_VAR_NAME = "MEW_TARGET"
  * The name of the Grale property that [mewTeaF8BuildTargets] will check if the corresponding
  * [environment variable][ENV_VAR_NAME] is not set when looking for the configured targets.
  */
-private const val PROPERTY_NAME = "mew-tea-f8-target"
+private const val PROPERTY_NAME = "mew-tea-f8.target"
 
 /**
  * A stringified list of the `configName` for each target in our enum.

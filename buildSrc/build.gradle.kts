@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 
 plugins {
@@ -17,10 +18,14 @@ dependencies {
 
 val jvmTargetVersion = JavaVersion.VERSION_1_8.toString()
 
-tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<KotlinJvmOptions>>().configureEach {
+tasks.withType<KotlinCompile<KotlinJvmOptions>>().configureEach {
     kotlinOptions {
         jvmTarget = jvmTargetVersion
     }
+}
+
+kotlin.sourceSets.all {
+    languageSettings.optIn("org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl")
 }
 
 tasks.withType<JavaCompile>().configureEach {

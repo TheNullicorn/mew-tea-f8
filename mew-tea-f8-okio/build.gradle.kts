@@ -5,10 +5,10 @@ repositories {
     mavenCentral()
 }
 
-@Suppress("UNUSED_VARIABLE")
+@Suppress("UNUSED_VARIABLE", "OPT_IN_USAGE")
 kotlin {
     // Exclude Windows 32-bit & WebAssembly 32-bit because okio doesn't support those targets.
-    registerTargetsForMewTeaF8(project, exceptIf = { it.preset?.name == "mingwX86" || it.preset?.name == "wasm32" })
+    registerTargetsForMewTeaF8(project, /* excludedTargets = */ ::mingwX86, ::wasm32, ::wasm)
     configureSourceSetsForMewTeaF8(project)
 
     sourceSets {

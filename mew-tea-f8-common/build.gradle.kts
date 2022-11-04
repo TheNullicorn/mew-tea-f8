@@ -11,9 +11,9 @@ repositories {
     mavenCentral()
 }
 
-@Suppress("UNUSED_VARIABLE")
+@Suppress("UNUSED_VARIABLE", "OPT_IN_USAGE")
 kotlin {
-    registerTargetsForMewTeaF8(project)
+    registerTargetsForMewTeaF8(project, /* excludedTargets = */ ::wasm)
     configureSourceSetsForMewTeaF8(project)
 
     // Add a separate compilation for our benchmarks.

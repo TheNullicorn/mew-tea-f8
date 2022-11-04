@@ -12,8 +12,6 @@ plugins {
 group = "me.nullicorn"
 version = "0.0.1-SNAPSHOT"
 
-val rootPackage: String = properties["library.root_package"] as String
-
 repositories {
     mavenCentral()
 }
@@ -28,6 +26,8 @@ subprojects {
     }
 
     configure<IdeaModel> {
+        val rootPackage: String = properties["mew-tea-f8.root_package"] as String
+
         module {
             settings {
                 for (sourceSet in kotlinExtension.sourceSets)
