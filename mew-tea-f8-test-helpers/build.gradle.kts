@@ -1,6 +1,5 @@
-import me.nullicorn.mewteaf8.gradle.configureSourceSetsForMewTeaF8
-import me.nullicorn.mewteaf8.gradle.targets.registerTargetsForMewTeaF8
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import me.nullicorn.mewteaf8.gradle.*
+import me.nullicorn.mewteaf8.gradle.targets.*
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
@@ -28,7 +27,7 @@ kotlin {
         }
 
         // If we're building for JVM, also explicitly depend on `kotlin-test-junit`. See the note below for details.
-        if (targets.any { it.platformType == KotlinPlatformType.jvm && it.compilations.isNotEmpty() }) {
+        if (this@kotlin.hasJvmCompilations) {
             val jvmMain by getting {
                 dependencies {
                     // "kotlin-test" is set up weird and for some reason the Java API isn't in the classpath at compile

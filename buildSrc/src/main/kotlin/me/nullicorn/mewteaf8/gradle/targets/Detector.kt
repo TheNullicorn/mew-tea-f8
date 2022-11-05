@@ -3,6 +3,8 @@ package me.nullicorn.mewteaf8.gradle.targets
 import me.nullicorn.mewteaf8.gradle.targets.MewTeaF8BuildTargets.COMMON_AND_NATIVE
 import me.nullicorn.mewteaf8.gradle.targets.MewTeaF8BuildTargets.values
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 
 /**
  * The configured [MewTeaF8BuildTargets] for the current [Project].
@@ -39,6 +41,12 @@ val Project.mewTeaF8BuildTargets: MewTeaF8BuildTargets
 
         throw IllegalArgumentException("\"$name\" is not a valid enviornment. Try one of these: $availableTargetNames")
     }
+
+/**
+ * Whether Kotlin is configured to compile any sources to bytecode for the JVM.
+ */
+val KotlinMultiplatformExtension.hasJvmCompilations: Boolean
+    get() = targets.any { it.platformType == KotlinPlatformType.jvm && it.compilations.isNotEmpty() }
 
 /**
  * The name of the environment variable that [mewTeaF8BuildTargets] will check first when looking for the configured
