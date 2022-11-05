@@ -6,12 +6,12 @@ import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 
-class ReadToStringAndArrayAndAppendableSuccessfullyTests {
+abstract class ReadCharactersSuccessfullyTests<Source : Mutf8Source> : Mutf8SourceTests<Source>() {
 
     @Test
     @JsName("A")
     fun `readTo should return an empty string if mutf8Length is 0`() {
-        val source = ByteListMutf8Source()
+        val source = Source()
         val emptyString = CharArray(size = 0).concatToString()
         assertEquals(expected = emptyString, actual = source.readToString(mutf8Length = 0))
     }
@@ -63,7 +63,7 @@ class ReadToStringAndArrayAndAppendableSuccessfullyTests {
                 expected = charArray,
                 mutf8Length = charArray.mutf8Length.toInt(),
                 createSource = {
-                    ByteListMutf8Source {
+                    Source {
                         for (char in charArray)
                             addAllBytesOf(char)
                     }
@@ -103,7 +103,7 @@ class ReadToStringAndArrayAndAppendableSuccessfullyTests {
                 expected = charArrayOf(char),
                 mutf8Length = bytesPerChar,
                 createSource = {
-                    ByteListMutf8Source {
+                    Source {
                         writeOneChar(char)
                     }
                 })
@@ -113,7 +113,7 @@ class ReadToStringAndArrayAndAppendableSuccessfullyTests {
             expected = chars,
             mutf8Length = chars.size * bytesPerChar,
             createSource = {
-                ByteListMutf8Source {
+                Source {
                     for (char in chars)
                         writeOneChar(char)
                 }

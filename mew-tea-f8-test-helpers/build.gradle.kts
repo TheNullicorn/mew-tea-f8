@@ -2,6 +2,11 @@ import me.nullicorn.mewteaf8.gradle.configureSourceSetsForMewTeaF8
 import me.nullicorn.mewteaf8.gradle.targets.registerTargetsForMewTeaF8
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 
+@Suppress("DSL_SCOPE_VIOLATION")
+plugins {
+    alias(libs.plugins.binary.compatibility)
+}
+
 repositories {
     mavenCentral()
 }
@@ -10,6 +15,9 @@ repositories {
 kotlin {
     registerTargetsForMewTeaF8(project, /* excludedTargets = */ ::wasm)
     configureSourceSetsForMewTeaF8(project)
+
+    // This module is only used internally (it's not published), so we don't have to worry about its API changing.
+    apiValidation.validationDisabled = true
 
     sourceSets {
         val commonMain by getting {

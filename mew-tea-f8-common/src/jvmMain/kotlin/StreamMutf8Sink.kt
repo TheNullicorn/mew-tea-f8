@@ -23,8 +23,8 @@ class StreamMutf8Sink(private val stream: OutputStream, bytesPerWrite: Int = 102
     }
 
     override fun writeBytes(bytes: ByteArray, untilIndex: Int) {
-        require(untilIndex >= 0) {"untilIndex must be at least 0, not $untilIndex"}
-        require(untilIndex <= bytes.size) {"untilIndex, $untilIndex, must not exceed bytes.size, ${bytes.size}"}
+        require(untilIndex >= 0) { "untilIndex must be at least 0, not $untilIndex" }
+        require(untilIndex <= bytes.size) { "untilIndex, $untilIndex, must not exceed bytes.size, ${bytes.size}" }
 
         stream.write(bytes, /* off = */ 0, /* len = */ untilIndex)
     }

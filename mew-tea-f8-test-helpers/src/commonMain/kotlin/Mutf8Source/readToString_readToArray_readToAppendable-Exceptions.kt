@@ -6,7 +6,7 @@ import kotlin.test.Test
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
-class ReadToStringAndCharArrayAndAppendableExceptionsTests {
+abstract class ReadCharactersExceptionallyTests<Source : Mutf8Source> : Mutf8SourceTests<Source>() {
 
     @Test
     @JsName("A")
@@ -16,7 +16,7 @@ class ReadToStringAndCharArrayAndAppendableExceptionsTests {
                 assertAllMethodsFailWith<IllegalArgumentException>(
                     mutf8Length,
                     createSource = {
-                        ByteListMutf8Source {
+                        Source {
                             charArray.forEach { addAllBytesOf(it) }
                         }
                     })
@@ -31,14 +31,14 @@ class ReadToStringAndCharArrayAndAppendableExceptionsTests {
         val singleCharByte: Byte = buildList { add1stOf1Bytes(singleByteOutputChars.first()) }.first()
         val almostTooManyBytes: List<Byte> = List(size = maxMutf8Length, init = { singleCharByte })
         assertAllMethodsSucceed(mutf8Length = maxMutf8Length, createSource = {
-            ByteListMutf8Source(bytes = almostTooManyBytes)
+            Source(input = almostTooManyBytes)
         })
 
         // Test the next highest `mutf8Length` after the max, plus a few more, plus `Int.MAX_VALUE`. All of these should
         // result in an `IllegalArgumentException` for being too high.
         for (charArray in sampleStrings)
             for (mutf8Length in (maxMutf8Length + 1..maxMutf8Length + 16) + Int.MAX_VALUE)
-                assertAllMethodsFailWith<IllegalArgumentException>(mutf8Length, createSource = ::ByteListMutf8Source)
+                assertAllMethodsFailWith<IllegalArgumentException>(mutf8Length, createSource = { Source() })
     }
 
     @Test
@@ -64,6 +64,7 @@ class ReadToStringAndCharArrayAndAppendableExceptionsTests {
                     assertTrue(amount != 0, "Can't return any fewer bytes than 0 for the test")
                     return ByteArray(size = amount - 1, init = { singleCharByte })
                 }
+
                 override fun readLength() = throw UnsupportedOperationException("Not the method being tested")
             }
         }
@@ -86,6 +87,7 @@ class ReadToStringAndCharArrayAndAppendableExceptionsTests {
                     assertTrue(amount != Int.MAX_VALUE, "Can't return too many bytes for test without overflowing")
                     return ByteArray(size = amount + 1, init = { singleCharByte })
                 }
+
                 override fun readLength() = throw UnsupportedOperationException("Not the method being tested")
             }
         }
@@ -104,7 +106,7 @@ class ReadToStringAndCharArrayAndAppendableExceptionsTests {
                 assertAllMethodsFailWith<UTFDataFormatException>(
                     mutf8Length = 1,
                     createSource = {
-                        ByteListMutf8Source {
+                        Source {
                             add1stOf2Bytes(char)
 
                             // Test that it `readTo*()` follows the supplied `mutf8Length`. It shouldn't reach outside
@@ -128,7 +130,7 @@ class ReadToStringAndCharArrayAndAppendableExceptionsTests {
                     assertAllMethodsFailWith<UTFDataFormatException>(
                         mutf8Length = 3 - bytesToOmit,
                         createSource = {
-                            ByteListMutf8Source {
+                            Source {
                                 add1stOf3Bytes(char)
 
                                 if (bytesToOmit >= 1 || includeOtherBytesOutOfBounds)
@@ -156,7 +158,7 @@ class ReadToStringAndCharArrayAndAppendableExceptionsTests {
                 assertAllMethodsFailWith<UTFDataFormatException>(
                     mutf8Length = bytesPerChar,
                     createSource = {
-                        ByteListMutf8Source {
+                        Source {
                             // Write the character's correct bytes.
                             addCorrectBytesOfChar(char)
                             // Edit the first byte so that its bits match the aforementioned pattern.
@@ -169,7 +171,7 @@ class ReadToStringAndCharArrayAndAppendableExceptionsTests {
                 assertAllMethodsFailWith<UTFDataFormatException>(
                     mutf8Length = bytesPerChar,
                     createSource = {
-                        ByteListMutf8Source {
+                        Source {
                             // Write the character's correct bytes.
                             addCorrectBytesOfChar(char)
                             // Edit the first byte so that its bits match the aforementioned pattern.
@@ -209,7 +211,7 @@ class ReadToStringAndCharArrayAndAppendableExceptionsTests {
                 assertAllMethodsFailWith<UTFDataFormatException>(
                     mutf8Length = 2,
                     createSource = {
-                        ByteListMutf8Source {
+                        Source {
                             add1stOf2Bytes(char)
                             add2ndOf2Bytes(char)
 
@@ -224,7 +226,7 @@ class ReadToStringAndCharArrayAndAppendableExceptionsTests {
                     assertAllMethodsFailWith<UTFDataFormatException>(
                         mutf8Length = 3,
                         createSource = {
-                            ByteListMutf8Source {
+                            Source {
                                 add1stOf3Bytes(char)
                                 add2ndOf3Bytes(char)
                                 add3rdOf3Bytes(char)
@@ -242,7 +244,7 @@ class ReadToStringAndCharArrayAndAppendableExceptionsTests {
      *
      * @param[E] The [Exception] class that [readBytes][Mutf8Source.readBytes] will throw for this test.
      * @param[exceptionConstructor] A reference to [E]'s constructor, which accepts a single `message: String` as its
-      * parameter. For example, `::IOException`.
+     * parameter. For example, `::IOException`.
      *
      * @throws[AssertionError] if any `readTo*()` method catches the exception or throws a different type of exception.
      */

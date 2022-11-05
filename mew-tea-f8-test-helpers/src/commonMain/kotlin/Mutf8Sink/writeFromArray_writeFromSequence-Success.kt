@@ -6,7 +6,7 @@ import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.math.min as minInt
 
-class WriteFromArrayAndSequenceSuccessfullyTests {
+abstract class WriteCharactersSuccessfullyTests<Sink : Mutf8Sink, Destination> : Mutf8SinkTests<Sink, Destination>() {
 
     @Test
     @JsName("A")
@@ -143,9 +143,9 @@ class WriteFromArrayAndSequenceSuccessfullyTests {
         endIndex: Int = chars.size
     ) {
         fun testWriterMethod(write: Mutf8Sink.() -> Unit) {
-            val sink = ByteListMutf8Sink()
+            val sink = Sink()
             sink.write()
-            assertContentEquals(expectedBytes, actual = sink.bytes)
+            assertContentEquals(expectedBytes.toByteArray(), actual = sink.bytes)
         }
 
         val string = chars.concatToString()
