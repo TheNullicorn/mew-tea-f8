@@ -31,6 +31,12 @@ kotlin {
     }
 
     sourceSets {
+        val commonTest by getting {
+            dependencies {
+                implementation(project(":mew-tea-f8-test-helpers"))
+            }
+        }
+
         val jvmMain by getting
         val jvmBenchmark by getting {
             dependsOn(jvmMain)

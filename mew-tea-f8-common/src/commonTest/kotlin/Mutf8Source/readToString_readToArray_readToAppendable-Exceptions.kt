@@ -11,7 +11,7 @@ class ReadToStringAndCharArrayAndAppendableExceptionsTests {
     @Test
     @JsName("A")
     fun `readTo should throw an IllegalArgumentException if mutf8Length is negative`() {
-        for (charArray in samples)
+        for (charArray in sampleStrings)
             for (mutf8Length in (-16..-1) + Int.MIN_VALUE)
                 assertAllMethodsFailWith<IllegalArgumentException>(
                     mutf8Length,
@@ -36,7 +36,7 @@ class ReadToStringAndCharArrayAndAppendableExceptionsTests {
 
         // Test the next highest `mutf8Length` after the max, plus a few more, plus `Int.MAX_VALUE`. All of these should
         // result in an `IllegalArgumentException` for being too high.
-        for (charArray in samples)
+        for (charArray in sampleStrings)
             for (mutf8Length in (maxMutf8Length + 1..maxMutf8Length + 16) + Int.MAX_VALUE)
                 assertAllMethodsFailWith<IllegalArgumentException>(mutf8Length, createSource = ::ByteListMutf8Source)
     }

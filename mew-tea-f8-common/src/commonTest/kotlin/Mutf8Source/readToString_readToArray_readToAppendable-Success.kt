@@ -55,7 +55,7 @@ class ReadToStringAndArrayAndAppendableSuccessfullyTests {
     @Test
     @JsName("E")
     fun `readTo should correctly decode sequences that may contain characters of differing lengths in bytes`() {
-        for (charArray in samples) {
+        for (charArray in sampleStrings) {
             val mutf8Length = charArray.mutf8Length
             require(mutf8Length <= 65535) { "sample array is too long to be encoded; mutf8Length=$mutf8Length" }
 

@@ -16,8 +16,7 @@ class WriteFromArrayAndSequenceSuccessfullyTests {
 
         // Test strings that do have characters, but using a `startIndex`/`endIndex` that are the same, thus selecting
         // `0` characters to be encoded.
-        val random = createReproducibleRandom()
-        for (charArray in samples.filter { it.isNotEmpty() }) {
+        for (charArray in sampleStrings.filter { it.isNotEmpty() }) {
             val indicesToTest = buildSet {
                 // Always test the first index.
                 add(0)
@@ -26,8 +25,11 @@ class WriteFromArrayAndSequenceSuccessfullyTests {
                 add(charArray.lastIndex)
 
                 // Test ~20 random indices over the entire array. Less may be added if they're already in the set.
-                for (i in 0 until minInt(charArray.size, 20))
-                    add(random.nextInt(until = charArray.size))
+                var i = 0
+                addRandomlyWhile({ i < minInt(charArray.size, 20) }, { random ->
+                    i++
+                    random.nextInt(until = charArray.size)
+                })
             }
 
             for (index in indicesToTest)
@@ -61,7 +63,7 @@ class WriteFromArrayAndSequenceSuccessfullyTests {
     @Test
     @JsName("E")
     fun `writeFrom should correctly encode entire sequences of characters whose lengths in bytes may vary`() {
-        for (charArray in samples)
+        for (charArray in sampleStrings)
             assertAllMethodsProduceBytes(
                 chars = charArray,
                 expectedBytes = buildList {
@@ -73,11 +75,9 @@ class WriteFromArrayAndSequenceSuccessfullyTests {
     @Test
     @JsName("F")
     fun `writeFrom should only encode characters within the specified range if one is specified`() {
-        for (charArray in samples.filter { it.isNotEmpty() }) {
+        for (charArray in sampleStrings.filter { it.isNotEmpty() }) {
             val startAndEndIndices = buildSet {
-                val random = createReproducibleRandom()
-
-                while (size < 20) {
+                addRandomlyWhile({ size < 20 }, { random ->
                     // Start from `1` so that the range is never the entire array/sequence. Other tests already cover
                     // that; this one is specifically testing smaller ranges within the arrays/sequences.
                     val rangeSize = random.nextInt(from = 1, until = charArray.size)
@@ -85,8 +85,9 @@ class WriteFromArrayAndSequenceSuccessfullyTests {
                     // Choose a random offset for the range to start at without putting the `endIndex` out of bounds.
                     val startIndex = random.nextInt(until = charArray.size - rangeSize)
                     val endIndex = startIndex + rangeSize
-                    add(startIndex to endIndex)
-                }
+
+                    return@addRandomlyWhile startIndex to endIndex
+                })
             }
 
             for ((startIndex, endIndex) in startAndEndIndices)

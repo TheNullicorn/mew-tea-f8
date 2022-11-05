@@ -18,5 +18,10 @@ kotlin {
                 api(libs.ktor.io)
             }
         }
+        val commonTest by getting {
+            dependencies {
+                implementation(project(":mew-tea-f8-test-helpers"))
+            }
+        }
     }
 }

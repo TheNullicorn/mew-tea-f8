@@ -9,7 +9,7 @@ class Mutf8LengthWithRangeSuccessTests {
     @Test
     @JsName("A")
     fun `mutf8Length should return 0 if the startIndex and endIndex are equal`() {
-        for (charArray in samples)
+        for (charArray in sampleStrings)
             for (index in charArray.indices.toSet() + 0) {
                 assertEquals(
                     expected = 0,
@@ -26,7 +26,7 @@ class Mutf8LengthWithRangeSuccessTests {
     @Test
     @JsName("B")
     fun `mutf8Length should return the mutf8Length of the entire sequence if startIndex is 0 and endIndex equals its size or length`() {
-        for (charArray in samples) {
+        for (charArray in sampleStrings) {
             assertEquals(
                 expected = charArray.mutf8Length,
                 actual = charArray.mutf8Length(startIndex = 0, endIndex = charArray.size)
@@ -45,7 +45,7 @@ class Mutf8LengthWithRangeSuccessTests {
     fun `mutf8Length should only count characters whose indices are at least the startIndex and at most the endIndex - 1`() {
         val random = createReproducibleRandom()
 
-        for (charArray in samples.filter { it.isNotEmpty() })
+        for (charArray in sampleStrings.filter { it.isNotEmpty() })
             for (i in 0..20) {
                 val startIndex = random.nextInt(until = charArray.size)
                 val endIndex = random.nextInt(from = startIndex, until = charArray.size + 1)

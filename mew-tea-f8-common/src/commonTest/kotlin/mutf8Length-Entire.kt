@@ -90,7 +90,7 @@ class EntireMutf8LengthTests {
     @Test
     @JsName("G")
     fun `mutf8Length should throw an IllegalArgumentException if the length of the CharSequence is negative`() {
-        for (charArray in samples)
+        for (charArray in sampleStrings)
             for (negativeLength in (-16..-1) + Int.MIN_VALUE) {
                 val charSequence = object : CharSequence by charArray.toString() {
                     override val length: Int

@@ -10,7 +10,7 @@ class WriteFromArrayAndSequenceExceptionsTests {
     @Test
     @JsName("A")
     fun `writeFromSequence should throw an IllegalArgumentException if the length of the CharSequence is negative`() {
-        for (charArray in samples)
+        for (charArray in sampleStrings)
             for (negativeLength in (-16..-1) + Int.MIN_VALUE) {
                 val charSequence = object : CharSequence by charArray.toString() {
                     override val length: Int
@@ -37,7 +37,7 @@ class WriteFromArrayAndSequenceExceptionsTests {
     @Test
     @JsName("B")
     fun `writeFrom should throw an IndexOutOfBoundsException if the startIndex is negative`() {
-        for (charArray in samples)
+        for (charArray in sampleStrings)
             for (startIndex in (-16..-1) + Int.MIN_VALUE)
                 assertAllMethodsFailWith<IndexOutOfBoundsException>(
                     sink = BlackHoleMutf8Sink,
@@ -50,7 +50,7 @@ class WriteFromArrayAndSequenceExceptionsTests {
     @Test
     @JsName("C")
     fun `writeFrom should throw an IndexOutOfBoundsException if the startIndex is greater than or equal to the size or length`() {
-        for (charArray in samples.filter { it.isNotEmpty() })
+        for (charArray in sampleStrings.filter { it.isNotEmpty() })
             for (startIndex in charArray.size..charArray.size + 15)
                 assertAllMethodsFailWith<IndexOutOfBoundsException>(
                     sink = BlackHoleMutf8Sink,
@@ -63,7 +63,7 @@ class WriteFromArrayAndSequenceExceptionsTests {
     @Test
     @JsName("D")
     fun `writeFrom should throw an IndexOutOfBoundsException if the endIndex exceeds the size or length`() {
-        for (charArray in samples)
+        for (charArray in sampleStrings)
             for (endIndex in charArray.size + 1..charArray.size + 16)
                 assertAllMethodsFailWith<IndexOutOfBoundsException>(
                     sink = BlackHoleMutf8Sink,
@@ -78,7 +78,7 @@ class WriteFromArrayAndSequenceExceptionsTests {
     fun `writeFrom should throw an IllegalArgumentException if the startIndex is greater than the endIndex`() {
         // For this test we'll set the `endIndex` to always be `0`, and the `startIndex` to be every index greater than
         // that (hence why we exclude `0` from the list via `- 0`).
-        for (charArray in samples)
+        for (charArray in sampleStrings)
             for (startIndex in charArray.indices - 0)
                 assertAllMethodsFailWith<IllegalArgumentException>(
                     sink = BlackHoleMutf8Sink,
@@ -101,7 +101,7 @@ class WriteFromArrayAndSequenceExceptionsTests {
         }
 
         // Exclude empty samples because they don't have anything to write, so `writeBytes()` will never be called.
-        for (charArray in samples.filter { it.isNotEmpty() })
+        for (charArray in sampleStrings.filter { it.isNotEmpty() })
             assertAllMethodsFailWith<IOException>(
                 sink = ioExceptionSink,
                 chars = charArray,
