@@ -5,7 +5,7 @@ package me.nullicorn.mewteaf8
  *
  * In the JVM, this is an alias for `java.io.IOException`. On other platforms, a placeholder class exists.
  */
-expect open class IOException(message: String) : Exception
+expect open class IOException(message: String, cause: Throwable? = null) : Exception
 
 /**
  * Thrown when the end of a binary sequence is reached earlier than expected while reading.
