@@ -75,7 +75,7 @@ abstract class WriteCharactersSuccessfullyTests<Sink : Mutf8Sink, Destination> :
     @Test
     @JsName("F")
     fun `writeFrom should only encode characters within the specified range if one is specified`() {
-        for (charArray in sampleStrings.filter { it.isNotEmpty() }) {
+        for (charArray in sampleStrings.filter { it.size > 1 }) {
             val startAndEndIndices = buildSet {
                 addRandomlyWhile({ size < 20 }, { random ->
                     // Start from `1` so that the range is never the entire array/sequence. Other tests already cover
