@@ -15,6 +15,7 @@ kotlin {
         ::linuxArm32Hfp,
         ::linuxMipsel32,
         ::linuxMips32,
+        ::linuxArm64,
         ::mingwX86,
         ::iosArm32,
         ::wasm32,
