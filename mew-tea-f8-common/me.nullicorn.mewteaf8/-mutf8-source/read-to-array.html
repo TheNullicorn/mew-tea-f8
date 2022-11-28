@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>readToArray</title>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../";</script>    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/jetbrains-mono.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer></script></head>
+<body>
+<div class="navigation-wrapper" id="navigation-wrapper">
+    <div id="leftToggler"><span class="icon-toggler"></span></div>
+    <div class="library-name">
+<a href="../../../index.html">
+<span>mew-tea-f8</span>            </a>    </div>
+    <div>0.0.1-SNAPSHOT
+    </div>
+    <div class="pull-right d-flex">
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector common-like" data-active="" data-filter=":mew-tea-f8-common:dokkaHtmlPartial/commonMain">All Platforms</button>
+        </div>
+        <button id="theme-toggle-button"><span id="theme-toggle"></span></button>
+        <div id="searchBar"></div>
+    </div>
+</div>
+<div id="container">
+    <div id="leftColumn">
+        <div id="sideMenu"></div>
+    </div>
+    <div id="main">
+<div class="main-content" id="content" pageids="mew-tea-f8-common::me.nullicorn.mewteaf8/Mutf8Source/readToArray/#kotlin.Int/PointingToDeclaration//-100742574">
+  <div class="breadcrumbs"><a href="../../index.html">mew-tea-f8-common</a><span class="delimiter">/</span><a href="../index.html">me.nullicorn.mewteaf8</a><span class="delimiter">/</span><a href="index.html">Mutf8Source</a><span class="delimiter">/</span><span class="current">readToArray</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>read</span><wbr><span>To</span><wbr><span><span>Array</span></span></h1>
+  </div>
+  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":mew-tea-f8-common:dokkaHtmlPartial/commonMain" data-filterable-set=":mew-tea-f8-common:dokkaHtmlPartial/commonMain" data-active="" data-toggle=":mew-tea-f8-common:dokkaHtmlPartial/commonMain">All Platforms</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":mew-tea-f8-common:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="read-to-array.html"><span class="token function">readToArray</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">mutf8Length<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-char-array/index.html">CharArray</a><span class="clearfix"><span class="floating-right">(<a href="https://github.com/TheNullicorn/mew-tea-f8/tree/main/mew-tea-f8-common/src/commonMain/kotlin/Mutf8Source.kt#L98">source</a>)</span></span></div><p class="paragraph">Reads a Modified UTF-8 string from the source and returns its characters as a <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-char-array/index.html">CharArray</a> in their original order.</p><p class="paragraph">This method does not read the 2-byte "UTF length" that comes before standard Modified UTF-8 strings. That must be read separately (if applicable) and passed to this method via the <a href="read-to-array.html">mutf8Length</a> parameter.</p><p class="paragraph">All indices in the returned array are populated by a character that was read from the source. There is no unused space at the beginning, end, or anywhere in the middle of the array.</p><span class="kdoc-tag"><h4 class="">Return</h4><p class="paragraph">an array of all the characters that were read, in order. Note that its <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-char-array/size.html">size</a>...</p><ul><li><p class="paragraph">will never exceed <a href="read-to-array.html">mutf8Length</a></p></li><li><p class="paragraph">will only be <code class="lang-kotlin">0</code> if <a href="read-to-array.html">mutf8Length</a> is also <code class="lang-kotlin">0</code></p></li><li><p class="paragraph">will never be <code class="lang-kotlin">0</code> if <a href="read-to-array.html">mutf8Length</a> is not <code class="lang-kotlin">0</code> either</p></li></ul></span><h4 class="">Parameters</h4><div data-togglable="Parameters"><div class="table" data-togglable="Parameters"><div class="table-row" data-filterable-current=":mew-tea-f8-common:dokkaHtmlPartial/commonMain" data-filterable-set=":mew-tea-f8-common:dokkaHtmlPartial/commonMain"><div class="main-subrow keyValue WithExtraAttributes"><div class=""><span class="inline-flex"><div><u><span><span>mutf8Length</span></span></u></div></span></div><div><div class="title"><div data-togglable="Parameters"><p class="paragraph">The number of bytes used to encode the string. This must be at least <code class="lang-kotlin">0</code> and at most <code class="lang-kotlin">65535</code> (<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-u-short/-m-a-x_-v-a-l-u-e.html">UShort.MAX_VALUE</a>).</p><p class="paragraph">Unless an <a href="../-e-o-f-exception/index.html">EOFException</a> or <a href="../-i-o-exception/index.html">IOException</a> is thrown, this is exactly the number of bytes that are <a href="../../../mew-tea-f8-common/me.nullicorn.mewteaf8/-mutf8-source/read-bytes.html">read</a> by this method.</p></div></div></div></div></div></div></div><h4 class="">Throws</h4><div class="table" data-togglable="Throws"><div class="table-row" data-filterable-current=":mew-tea-f8-common:dokkaHtmlPartial/commonMain" data-filterable-set=":mew-tea-f8-common:dokkaHtmlPartial/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-illegal-argument-exception/index.html"><span>Illegal</span><wbr><span>Argument</span><wbr><span><span>Exception</span></span></a></div></span></div><div><div class="title"><p class="paragraph">if <a href="read-to-array.html">mutf8Length</a> exceeds <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-u-short/-m-a-x_-v-a-l-u-e.html">UShort.MAX_VALUE</a>.</p></div></div></div></div><div class="table-row" data-filterable-current=":mew-tea-f8-common:dokkaHtmlPartial/commonMain" data-filterable-set=":mew-tea-f8-common:dokkaHtmlPartial/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-e-o-f-exception/index.html"><span><span>EOFException</span></span></a></div></span></div><div><div class="title"><p class="paragraph">if <a href="../../../mew-tea-f8-common/me.nullicorn.mewteaf8/-mutf8-source/read-bytes.html">readBytes</a> returns fewer bytes than expected by the <a href="read-to-array.html">mutf8Length</a>.</p></div></div></div></div><div class="table-row" data-filterable-current=":mew-tea-f8-common:dokkaHtmlPartial/commonMain" data-filterable-set=":mew-tea-f8-common:dokkaHtmlPartial/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-i-o-exception/index.html"><span><span>IOException</span></span></a></div></span></div><div><div class="title"><p class="paragraph">if <a href="../../../mew-tea-f8-common/me.nullicorn.mewteaf8/-mutf8-source/read-bytes.html">readBytes</a> returns <i>more</i> bytes than expected by the <a href="read-to-array.html">mutf8Length</a>.</p></div></div></div></div><div class="table-row" data-filterable-current=":mew-tea-f8-common:dokkaHtmlPartial/commonMain" data-filterable-set=":mew-tea-f8-common:dokkaHtmlPartial/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-u-t-f-data-format-exception/index.html"><span>UTFData</span><wbr><span>Format</span><wbr><span><span>Exception</span></span></a></div></span></div><div><div class="title"><p class="paragraph">if the second and/or third byte of a character does not have its most-significant bit set (<code class="lang-kotlin">1</code>) and its second-most-significant bit unset (<code class="lang-kotlin">0</code>), which is required for the second and third bytes of 2-byte and 3-byte characters. In other words, either byte's bits don't follow the pattern <code class="lang-kotlin">10xx xxxx</code>, where each <code class="lang-kotlin">x</code> can be either a <code class="lang-kotlin">1</code> or <code class="lang-kotlin">0</code>.</p></div></div></div></div></div></div>  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2022 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+    </div>
+</div>
+
+</body></html>
+

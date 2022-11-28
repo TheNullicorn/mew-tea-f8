@@ -1,0 +1,9 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+
+module:mew-tea-f8-common
+me.nullicorn.mewteaf8
+module:mew-tea-f8-ktor-io
+me.nullicorn.mewteaf8
+module:mew-tea-f8-okio
+me.nullicorn.mewteaf8
