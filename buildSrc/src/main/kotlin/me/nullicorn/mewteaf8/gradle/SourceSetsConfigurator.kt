@@ -1,13 +1,15 @@
 package me.nullicorn.mewteaf8.gradle
 
-import me.nullicorn.mewteaf8.gradle.targets.mewTeaF8BuildTargets
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
+private val REQUIRED_EXTENSIONS = setOf("kt", "kts")
+private val EXCLUDED_EXTENSIONS = setOf(".sample.kts")
+
 fun KotlinMultiplatformExtension.configureSourceSetsForMewTeaF8(project: Project) {
-    val environment = project.mewTeaF8BuildTargets
+    val environment = MewTeaF8BuildProperties.getBuildTargetsOf(project)
 
     @Suppress("UNUSED_VARIABLE")
     sourceSets.run {
@@ -44,6 +46,13 @@ fun KotlinMultiplatformExtension.configureSourceSetsForMewTeaF8(project: Project
         if (environment.includesNative)
             for (nativeSourceSet in getMainSourceSetsForPlatform(KotlinPlatformType.native))
                 nativeSourceSet.dependsOn(nativeMain)
+
+        // Exclude non-source files, such as markdown documentation (`*.md`) and code samples (`*.sample.kt`).
+        for (sourceSet in this)
+            sourceSet.kotlin {
+                exclude { file -> REQUIRED_EXTENSIONS.none { ext -> file.name.endsWith(ext, ignoreCase = true) } }
+                exclude { file -> EXCLUDED_EXTENSIONS.any { ext -> file.name.endsWith(ext, ignoreCase = true) } }
+            }
     }
 }
 

@@ -1,0 +1,24 @@
+name: Update Documentation Site
+
+# Trigger manually, or whenever the main branch is updated.
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout main branch
+        uses: actions/checkout@v2.5.0
+
+      - name: Generate HTML docs
+        run: ./gradlew dokkaHtmlMultiModule
+
+      - name: Publish to GitHub Pages Branch
+        uses: JamesIves/github-pages-deploy-action@v4.4.1
+        with:
+          folder: build/dokka/htmlMultiModule
+          branch: gh-pages

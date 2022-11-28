@@ -1,0 +1,10 @@
+# Module mew-tea-f8-common
+
+Modified UTF-8 utilities that don't require any external dependencies besides Kotlin itself
+
+# Package me.nullicorn.mewteaf8
+
+Utilities for getting the size, in bytes, of an individual `Char`, `CharArray`, or `CharSequence` when encoded as
+Modified UTF-8 data. For the sake of brevity, this is referred to as the `mutf8Length` (Modified UTF-8 length).
+
+Also includes JVM-specific utilities for Modified UTF-8 I/O with Java's `InputStream` and `OutputStream` classes.

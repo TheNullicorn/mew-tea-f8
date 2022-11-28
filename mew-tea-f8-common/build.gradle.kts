@@ -1,4 +1,5 @@
 import me.nullicorn.mewteaf8.gradle.*
+import me.nullicorn.mewteaf8.gradle.publishing.*
 import me.nullicorn.mewteaf8.gradle.targets.*
 
 @Suppress("DSL_SCOPE_VIOLATION")
@@ -15,6 +16,7 @@ repositories {
 kotlin {
     registerTargetsForMewTeaF8(project, /* excludedTargets = */ ::wasm)
     configureSourceSetsForMewTeaF8(project)
+    configureDocumentationForMewTeaF8(excludeSourceSetIf = { "[Bb]enchmark".toRegex() in it.name })
 
     sourceSets {
         val commonTest by getting {

@@ -1,4 +1,5 @@
 import me.nullicorn.mewteaf8.gradle.*
+import me.nullicorn.mewteaf8.gradle.publishing.*
 import me.nullicorn.mewteaf8.gradle.targets.*
 
 repositories {
@@ -10,6 +11,7 @@ kotlin {
     // Exclude Windows 32-bit & WebAssembly 32-bit because ktor-io doesn't support those targets.
     registerTargetsForMewTeaF8(project, /* excludedTargets = */ ::mingwX86, ::wasm32, ::wasm)
     configureSourceSetsForMewTeaF8(project)
+    configureDocumentationForMewTeaF8()
 
     sourceSets {
         val commonMain by getting {

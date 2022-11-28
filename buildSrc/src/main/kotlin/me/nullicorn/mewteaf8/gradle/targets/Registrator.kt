@@ -1,12 +1,20 @@
 package me.nullicorn.mewteaf8.gradle.targets
 
+import me.nullicorn.mewteaf8.gradle.MewTeaF8BuildProperties
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinTargetContainerWithPresetFunctions
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetDsl
 
 typealias TargetRegistrator = () -> Any
+
+/**
+ * Whether Kotlin is configured to compile any of the project's source code to JVM bytecode.
+ */
+val KotlinMultiplatformExtension.hasJvmCompilations: Boolean
+    get() = targets.any { it.platformType == KotlinPlatformType.jvm && it.compilations.isNotEmpty() }
 
 /**
  * Registers the available Kotlin targets [configured][mewTeaF8BuildTargets] for the [project]'s current environment.
@@ -28,7 +36,7 @@ fun KotlinMultiplatformExtension.registerTargetsForMewTeaF8(
     project: Project,
     vararg excludedTargets: TargetRegistrator
 ) {
-    val environment = project.mewTeaF8BuildTargets
+    val environment = MewTeaF8BuildProperties.getBuildTargetsOf(project)
 
     if (environment.includesCommon)
         registerCommonTargets(*excludedTargets)

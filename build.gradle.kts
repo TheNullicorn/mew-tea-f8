@@ -1,3 +1,5 @@
+import me.nullicorn.mewteaf8.gradle.*
+import me.nullicorn.mewteaf8.gradle.publishing.*
 import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.jetbrains.gradle.ext.packagePrefix
 import org.jetbrains.gradle.ext.settings
@@ -5,6 +7,7 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
+    id(libs.plugins.kotlin.documentation.get().pluginId)
     alias(libs.plugins.binary.compatibility) apply false
     alias(libs.plugins.intellij.settings) apply false
 }
@@ -26,7 +29,7 @@ subprojects {
     }
 
     configure<IdeaModel> {
-        val rootPackage: String = properties["mew-tea-f8.root_package"] as String
+        val rootPackage = MewTeaF8BuildProperties.getRootPackageOf(this@subprojects)
 
         module {
             settings {

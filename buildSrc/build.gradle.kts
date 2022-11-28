@@ -11,7 +11,12 @@ repositories {
 }
 
 dependencies {
-    implementation(kotlin("gradle-plugin", version = libs.versions.kotlin.asProvider().get()))
+    fun plugin(id: String, version: String) = "$id:${id}.gradle.plugin:$version"
+    val kotlinVersion = libs.versions.kotlin.asProvider().get()
+
+    implementation(kotlin("gradle-plugin", version = kotlinVersion))
+    implementation(plugin("org.jetbrains.dokka", version = kotlinVersion))
+    implementation("org.jetbrains.dokka:dokka-base:$kotlinVersion")
 }
 
 // Set the JVM target version to 1.8 for both Kotlin and Java because for some reason they're different in buildSrc.
