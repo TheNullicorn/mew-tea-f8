@@ -1,6 +1,6 @@
-import me.nullicorn.mewteaf8.gradle.*
-import me.nullicorn.mewteaf8.gradle.publishing.*
-import me.nullicorn.mewteaf8.gradle.targets.*
+import me.nullicorn.mewteaf8.gradle.configureSourceSetsForMewTeaF8
+import me.nullicorn.mewteaf8.gradle.publishing.configureDocumentationForMewTeaF8
+import me.nullicorn.mewteaf8.gradle.targets.registerTargetsForMewTeaF8
 
 repositories {
     mavenCentral()
@@ -8,8 +8,18 @@ repositories {
 
 @Suppress("UNUSED_VARIABLE", "OPT_IN_USAGE")
 kotlin {
-    // Exclude Windows 32-bit & WebAssembly 32-bit because ktor-io doesn't support those targets.
-    registerTargetsForMewTeaF8(project, /* excludedTargets = */ ::mingwX86, ::wasm32, ::wasm)
+    // Exclude targets that ktor-io doesn't support.
+    registerTargetsForMewTeaF8(
+        project,
+        /* excludedTargets = */
+        ::linuxArm32Hfp,
+        ::linuxMipsel32,
+        ::linuxMips32,
+        ::linuxArm64,
+        ::mingwX86,
+        ::wasm32,
+        ::wasm
+    )
     configureSourceSetsForMewTeaF8(project)
     configureDocumentationForMewTeaF8()
 
