@@ -86,5 +86,5 @@ object MewTeaF8BuildProperties {
      * most recently dated commit hosted on the primary branch.
      */
     fun getGitTreeNameOf(project: Project): String =
-        URLEncoder.encode(project.properties[GIT_TREE_NAME] as? String ?: "HEAD", StandardCharsets.UTF_8)
+        URLEncoder.encode(project.properties[GIT_TREE_NAME] as? String ?: "HEAD", "UTF-8")
 }
