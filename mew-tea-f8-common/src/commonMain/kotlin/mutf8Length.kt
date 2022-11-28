@@ -5,7 +5,7 @@ package me.nullicorn.mewteaf8
 import kotlin.jvm.JvmName
 
 /**
- * The number of bytes needed to encode the character in Modified UTF-8.
+ * The number of bytes used to encode the character in a Modified UTF-8 sequence.
  *
  * - For characters in the range `'\u0001' .. '\u007F'`, this is `1`
  * - For characters in the range `'\u0080' .. '\u07FF'`, this is `2`
@@ -14,7 +14,15 @@ import kotlin.jvm.JvmName
  *
  * That list covers the entire range of a [Char], so there are no other values to note.
  *
+ * This can be used from Java sources as follows:
+ * ```java
+ * import me.nullicorn.mewteaf8.Mutf8Length;
+ * /* ... */
+ * Mutf8Length.of(char)
+ * ```
+ *
  * @receiver The character to check the Modified UTF-8 length of.
+ * @sample me.nullicorn.mewteaf8.Mutf8LengthSamples.Char_mutf8Length
  */
 @get:JvmName("of")
 val Char.mutf8Length: Int
@@ -31,27 +39,42 @@ val Char.mutf8Length: Int
     }
 
 /**
- * The number of bytes needed to encode the entire sequence of characters in Modified UTF-8.
+ * The summed [mutf8Length][Char.mutf8Length] for all the characters in the sequence.
  *
  * This is an alias for [CharSequence.mutf8Length] with `startIndex = 0` and `endIndex = length`. The selected indices
  * are guaranteed to be valid, so all [IllegalArgumentException]s documented at [CharSequence.mutf8Length] are
  * guaranteed not to occur unless also documented on this property. Other than that, the contract & documentation for
  * [CharSequence.mutf8Length] applies here as well.
  *
+ * This can be used from Java sources as follows:
+ * ```java
+ * import me.nullicorn.mewteaf8.Mutf8Length;
+ * /* ... */
+ * Mutf8Length.of(charSequence)
+ * ```
+ *
  * @throws[IllegalArgumentException] if the [length][CharSequence.length] of the [CharSequence] is a negative number.
  *
  * @see[CharSequence.mutf8Length]
+ * @sample me.nullicorn.mewteaf8.Mutf8LengthSamples.CharSequence_mutf8Length_entire
  */
 @get:JvmName("of")
 val CharSequence.mutf8Length: Long
     get() = mutf8Length(startIndex = 0, endIndex = length)
 
 /**
- * The number of bytes needed to encode the entire array of characters in Modified UTF-8.
+ * The summed [mutf8Length][Char.mutf8Length] for all the characters in the array.
  *
  * This is an alias for [CharArray.mutf8Length] with `startIndex = 0` and `endIndex = size`. The selected indices are
  * guaranteed to be valid, so all [IllegalArgumentException]s documented at [CharArray.mutf8Length] are guaranteed not
  * to occur. Other than that, the contract & documentation for [CharArray.mutf8Length] applies here as well.
+ *
+ * This can be used from Java sources as follows:
+ * ```java
+ * import me.nullicorn.mewteaf8.Mutf8Length;
+ * /* ... */
+ * Mutf8Length.of(charArray)
+ * ```
  *
  * @see[CharArray.mutf8Length]
  */
@@ -60,33 +83,22 @@ val CharArray.mutf8Length: Long
     get() = mutf8Length(startIndex = 0, endIndex = size)
 
 /**
- * The number of bytes needed to encode a range of the sequence's characters in Modified UTF-8.
+ * The summed [mutf8Length][Char.mutf8Length] for the characters in a subsequence of this one.
  *
- * The "range" is defined as a [startIndex] and [endIndex], which behave the same as the first and second operands of
- * Kotlin's infix [until] function. Both indexes must be at least `0`, and the [startIndex] cannot be greater than the
- * [endIndex], though they can be equal to select `0` characters. [startIndex] must be less than the sequence's
- * [length][CharSequence.length] and [endIndex] must be less than *or* equal to [length][CharSequence.length]. If the
- * above conditions are not met, an [IllegalArgumentException] is thrown.
+ * If that sum exceeds `65535`, or [UShort.MAX_VALUE], then it will still be returned, but note that the selected range
+ * is too long to encode as a single Modified UTF-8 sequence; it must be split up, compressed, or encoded differently.
  *
- * If the returned [Long] exceeds `65535` ([UShort.MAX_VALUE]), then the sequence is too long to be encoded. This is
- * because a Modified UTF-8 string's length is encoded as an unsigned 16-bit (2-byte) integer. `65535` is the largest
- * value that can be represented given those limitations.
+ * Assuming the [startIndex] and [endIndex] form a valid range in a sequence, `charSequence`, then this will yield the
+ * same sum as:
+ * ```kotlin
+ * charSequence.subSequence(startIndex, endIndex).mutf8Length
+ * ```
  *
- * The returned [Long] is equal to the sum of each character in the specified range, where their contributions to the
- * sum are as follows:
- * - Characters in the range `'\u0001' .. '\u007F'` add `1` to the sum
- * - Characters in the range `'\u0080' .. '\u07FF'` add `2` to the sum
- * - Characters in the range `'\u0800' .. '\uFFFF'` add `3` to the sum
- * - The character `'\u0000'` adds `2` to the sum
- *
- * That list covers the entire range of a [Char], so there are no other values to note.
- *
- * The returned [Long] will always be at least `0`, and does not account for the 2-byte length that typically precedes
- * Modified UTF-8 strings.
- *
- * To call this from Java sources:
+ * This can be used from Java sources as follows:
  * ```java
- * Mutf8Length.of(chars, 0, chars.length())
+ * import me.nullicorn.mewteaf8.Mutf8Length;
+ * /* ... */
+ * Mutf8Length.of(charSequence, startIndex, endIndex)
  * ```
  *
  * @receiver The characters to determine the collective length of, in bytes.
@@ -105,6 +117,8 @@ val CharArray.mutf8Length: Long
  * equal to each other at a value other than `0`.
  * @throws[IndexOutOfBoundsException] if [endIndex] exceeds the [length][CharSequence.length].
  * @throws[IllegalArgumentException] if [startIndex] is greater than the [endIndex].
+ *
+ * @sample me.nullicorn.mewteaf8.Mutf8LengthSamples.CharSequence_mutf8Length_range
  */
 @JvmName("of")
 fun CharSequence.mutf8Length(startIndex: Int = 0, endIndex: Int = length): Long {
@@ -119,7 +133,7 @@ fun CharSequence.mutf8Length(startIndex: Int = 0, endIndex: Int = length): Long 
 }
 
 /**
- * The number of bytes needed to encode a range of the array's characters in Modified UTF-8.
+ * The summed [mutf8Length][Char.mutf8Length] for the characters in a subsection of this array.
  *
  * The contract of this method is identical to that of [CharSequence.mutf8Length], except...
  * - [CharSequence] is replaced with [CharArray]
@@ -129,6 +143,13 @@ fun CharSequence.mutf8Length(startIndex: Int = 0, endIndex: Int = length): Long 
  * possible
  *
  * All parameters, exceptions, constraints, and notes from [CharSequence.mutf8Length] apply to this function as well.
+ *
+ * This can be used from Java sources as follows:
+ * ```java
+ * import me.nullicorn.mewteaf8.Mutf8Length;
+ * /* ... */
+ * Mutf8Length.of(charArray, startIndex, endIndex)
+ * ```
  *
  * @see[CharSequence.mutf8Length]
  */
