@@ -3,8 +3,10 @@ name: Update Documentation Site
 # Trigger manually, or whenever the main branch is updated.
 on:
   workflow_dispatch:
-  push:
+  workflow_run:
+    workflows: [ 'Test on All Platforms' ]
     branches: [ main ]
+    types: [ completed ]
 
 jobs:
   build:
@@ -15,6 +17,8 @@ jobs:
         uses: actions/checkout@v2.5.0
 
       - name: Generate HTML docs
+        env:
+          MEW_GIT_TREE_NAME: ${{ github.sha }}
         run: ./gradlew dokkaHtmlMultiModule
 
       - name: Publish to GitHub Pages Branch

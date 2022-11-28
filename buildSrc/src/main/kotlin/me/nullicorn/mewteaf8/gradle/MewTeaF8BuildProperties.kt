@@ -17,7 +17,8 @@ object MewTeaF8BuildProperties {
     // @formatter:on
 
     // Environment Variables             @formatter:off
-    private const val ENV_BUILD_TARGET = "${ENV_QUALIFIER}TARGET"
+    private const val ENV_BUILD_TARGET  = "${ENV_QUALIFIER}TARGET"
+    private const val ENV_GIT_TREE_NAME = "${ENV_QUALIFIER}GIT_TREE_NAME"
     // @formatter:on
 
     /**
@@ -77,14 +78,27 @@ object MewTeaF8BuildProperties {
     /**
      * Retrieves the configured git tree name that the local files of a [project] are from.
      *
-     * This is retrieved from the "`mew-tea-f8.git_tree_name`" Gradle property. It is used by Dokka to generate
-     * hyperlinks to the source code itself on GitHub. Therefore, it should be any value that GitHub is able to
-     * interpret as the `<tree>` in URLs such as these: "`https://github.com/user/repo/tree/<tree>`". For example, the
-     * names of branches and tags, commit hashes, and "`HEAD`" are all valid.
+     * The configured tree name is searched for in the following places, in order:
+     * 1. If the environment variable "`MEW_GIT_TREE_NAME`" is set (and not empty), that option is used
+     * 2. If the Gradle property "`mew-tea-f8.git_tree_name`" is set (and is a non-empty string), that option is used
+     * 3. Otherwise, "`HEAD`" is used so that source code links point to the most recently dated commit hosted on the
+     * primary branch.
      *
-     * If it's not configured, or if it isn't a string, then "`HEAD`" is returned so that source code links point to the
-     * most recently dated commit hosted on the primary branch.
+     * This is used by Dokka to generate hyperlinks to the source code itself on GitHub. Therefore, it should be any
+     * value that GitHub is able to interpret as the `<tree>` in URLs such as these:
+     * "`https://github.com/user/repo/tree/<tree>`". For example, the names of branches and tags, commit hashes, and
+     * "`HEAD`" are all valid.
      */
-    fun getGitTreeNameOf(project: Project): String =
-        URLEncoder.encode(project.properties[GIT_TREE_NAME] as? String ?: "HEAD", "UTF-8")
+    fun getGitTreeNameOf(project: Project): String {
+        var gitTreeName = System.getenv(ENV_GIT_TREE_NAME)
+
+        if (gitTreeName.isNullOrEmpty())
+            gitTreeName = project.properties[GIT_TREE_NAME] as? String
+
+        if (gitTreeName.isNullOrEmpty())
+            gitTreeName = "HEAD"
+
+        // Just to be safe, URL-encode the name since it'll be used in the path of a URL.
+        return URLEncoder.encode(gitTreeName, "UTF-8")
+    }
 }
