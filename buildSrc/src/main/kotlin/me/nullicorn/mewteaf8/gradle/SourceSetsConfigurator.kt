@@ -5,8 +5,8 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
-private val REQUIRED_EXTENSIONS = setOf("kt", "kts")
-private val EXCLUDED_EXTENSIONS = setOf(".sample.kts")
+private val INCLUDED_EXTENSIONS = setOf(".kt", ".kts", ".java")
+private val EXCLUDED_EXTENSIONS = setOf(".sample.kt", ".sample.kts", ".sample.java")
 
 fun KotlinMultiplatformExtension.configureSourceSetsForMewTeaF8(project: Project) {
     val environment = MewTeaF8BuildProperties.getBuildTargetsOf(project)
@@ -48,11 +48,12 @@ fun KotlinMultiplatformExtension.configureSourceSetsForMewTeaF8(project: Project
                 nativeSourceSet.dependsOn(nativeMain)
 
         // Exclude non-source files, such as markdown documentation (`*.md`) and code samples (`*.sample.kt`).
-        for (sourceSet in this)
-            sourceSet.kotlin {
-                exclude { file -> REQUIRED_EXTENSIONS.none { ext -> file.name.endsWith(ext, ignoreCase = true) } }
+        configureEach {
+            kotlin {
+                include { file -> INCLUDED_EXTENSIONS.any { ext -> file.name.endsWith(ext, ignoreCase = true) } }
                 exclude { file -> EXCLUDED_EXTENSIONS.any { ext -> file.name.endsWith(ext, ignoreCase = true) } }
             }
+        }
     }
 }
 
