@@ -22,7 +22,6 @@ import kotlin.jvm.JvmName
  * ```
  *
  * @receiver The character to check the Modified UTF-8 length of.
- * @sample me.nullicorn.mewteaf8.Mutf8LengthSamples.Char_mutf8Length
  */
 @get:JvmName("of")
 val Char.mutf8Length: Int
@@ -56,7 +55,6 @@ val Char.mutf8Length: Int
  * @throws[IllegalArgumentException] if the [length][CharSequence.length] of the [CharSequence] is a negative number.
  *
  * @see[CharSequence.mutf8Length]
- * @sample me.nullicorn.mewteaf8.Mutf8LengthSamples.CharSequence_mutf8Length_entire
  */
 @get:JvmName("of")
 val CharSequence.mutf8Length: Long
@@ -117,8 +115,6 @@ val CharArray.mutf8Length: Long
  * equal to each other at a value other than `0`.
  * @throws[IndexOutOfBoundsException] if [endIndex] exceeds the [length][CharSequence.length].
  * @throws[IllegalArgumentException] if [startIndex] is greater than the [endIndex].
- *
- * @sample me.nullicorn.mewteaf8.Mutf8LengthSamples.CharSequence_mutf8Length_range
  */
 @JvmName("of")
 fun CharSequence.mutf8Length(startIndex: Int = 0, endIndex: Int = length): Long {
