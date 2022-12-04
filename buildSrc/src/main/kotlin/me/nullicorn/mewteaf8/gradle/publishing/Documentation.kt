@@ -8,6 +8,8 @@ import org.gradle.kotlin.dsl.withType
 import org.jetbrains.dokka.gradle.AbstractDokkaLeafTask
 import org.jetbrains.dokka.gradle.DokkaPlugin
 import org.jetbrains.dokka.gradle.GradleDokkaSourceSetBuilder
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import java.io.File
 import java.net.URI
 
@@ -39,7 +41,7 @@ fun Project.configureDocumentationForMewTeaF8(excludeSourceSetIf: (GradleDokkaSo
             }
 
             // Register our code samples, package-level documentation, and module-level documentation.
-            includeSupplementaryFiles()
+            includeSupplementaryFiles(project = this@configureDocumentationForMewTeaF8)
 
             // If this source set has any platform-specific code, include links to its source code on GitHub.
             includeLinksToSourcesOnGitHub(project = this@configureDocumentationForMewTeaF8)
@@ -64,20 +66,46 @@ fun Project.configureDocumentationForMewTeaF8(excludeSourceSetIf: (GradleDokkaSo
  * contain at least 1 top-level container type (class, interface, object, etc) with at least 1 function each. The code
  * inside those functions is what will appear in the documented member's "Samples" section.
  */
-private fun GradleDokkaSourceSetBuilder.includeSupplementaryFiles() {
-    // Register our code samples, package-level documentation, and module-level documentation.
-    for (sourceDir in sourceRoots)
-        for (sourceFile in sourceDir.walkTopDown()) {
-            // Include markdown files as package-level or module-level documentation.
-            if (sourceFile.extension.toLowerCase() in setOf("md", "markdown")) {
-                includes.from(sourceFile)
+private fun GradleDokkaSourceSetBuilder.includeSupplementaryFiles(project: Project) {
+    // A map of all the markdown files we'll be including, keyed by their paths relative to their source-set's root dir.
+    // This way if the source-set has a markdown file at the same path as one of its parent source-sets, the child's
+    // will take precedence. Or, if a child source-set is missing a markdown file that only its parent has, it will be
+    // included in the child's docs.
+    val markdownDocs = HashMap<String, File>()
+
+    // Register our code samples, package-level documentation, and module-level documentation. This is recursive so that
+    // each source-set includes the docs of any of its parent source-sets.
+    fun includeFromSourceSet(sourceSet: KotlinSourceSet) {
+        for (sourceDir in sourceSet.kotlin.srcDirs)
+            for (sourceFile in sourceDir.walkTopDown()) {
+                // Include markdown files as package-level or module-level documentation. Right now we're just
+                // collecting them in a map; they're actually included at the end of the outer function.
+                if (sourceFile.extension.toLowerCase() in setOf("md", "markdown"))
+                    markdownDocs.putIfAbsent(/* key = */ sourceFile.toRelativeString(base = sourceDir), /* value = */sourceFile)
+
+                // Include code samples from files ending in `.sample.kts`. Unlike markdown files, these actually are
+                // being registered right now, not at the end.
+                if (sourceFile.name.endsWith(".sample.kt", ignoreCase = true))
+                    samples.from(sourceFile)
             }
 
-            // Include code samples from files ending in `.sample.kts`.
-            if (sourceFile.name.endsWith(".sample.kt", ignoreCase = true))
-                samples.from(sourceFile)
-        }
+        for (parentSourceSet in sourceSet.dependsOn)
+            includeFromSourceSet(parentSourceSet)
+    }
 
+    // Determine the `KotlinSourceSet` that this `DokkaSourceSet` was created for.
+    val kotlinSourceSet = project.extensions.getByType(KotlinMultiplatformExtension::class.java)
+        .sourceSets.firstOrNull { it.kotlin.sourceDirectories.any { it in sourceRoots } }
+        ?: return
+
+    // Register all the markdown files & sample code from the source-set & all its parents.
+    includeFromSourceSet(kotlinSourceSet)
+
+    // Actually register the markdown files; the samples are already registered.
+    includes.from.addAll(markdownDocs.values)
+
+    // Exclude any sample files & markdown files from being documented as part of the code itself, rather than being
+    // used as supplements, since they appear alongside the library code itself.
     suppressedFiles.from(includes)
     suppressedFiles.from(samples)
 }
@@ -123,10 +151,8 @@ private fun GradleDokkaSourceSetBuilder.humanizeSourceSetNames() {
     // For "common" source-sets specifically, replace it with something friendlier to all users.
     if (originalName.equals("common", ignoreCase = true))
         displayName.set("All Platforms")
-
     else if (originalName.equals("jvm", ignoreCase = true))
         displayName.set("Java / Kotlin JVM")
-
     else if (originalName.equals("nonJvm", ignoreCase = true))
         displayName.set("Kotlin JS / Kotlin Native")
 
