@@ -1,9 +1,9 @@
-@file:JvmSynthetic
+@file:JvmName("Mutf8KtorInputs")
 
 package me.nullicorn.mewteaf8
 
 import io.ktor.utils.io.core.*
-import kotlin.jvm.JvmSynthetic
+import kotlin.jvm.JvmName
 
 /**
  * Creates a [InputMutf8Source] around the receiver, reads the length & contents of a Modified UTF-8 string, and then
@@ -24,6 +24,7 @@ import kotlin.jvm.JvmSynthetic
  * @see[InputMutf8Source.readToString]
  */
 @Throws(IOException::class, EOFException::class, UTFDataFormatException::class)
+@JvmName("readStringFrom")
 fun Input.readMutf8String(): String {
     val source = InputMutf8Source(input = this)
     val mutf8Length = source.readLength()
@@ -49,6 +50,7 @@ fun Input.readMutf8String(): String {
  * @see[InputMutf8Source.readToArray]
  */
 @Throws(IOException::class, EOFException::class, UTFDataFormatException::class)
+@JvmName("readArrayFrom")
 fun Input.readMutf8Array(): CharArray {
     val source = InputMutf8Source(input = this)
     val mutf8Length = source.readLength()
@@ -74,6 +76,7 @@ fun Input.readMutf8Array(): CharArray {
  * @see[InputMutf8Source.readToAppendable]
  */
 @Throws(IOException::class, EOFException::class, UTFDataFormatException::class)
+@JvmName("readToAppendableFrom")
 fun Input.readMutf8ToAppendable(destination: Appendable) {
     val source = InputMutf8Source(input = this)
     val mutf8Length = source.readLength()

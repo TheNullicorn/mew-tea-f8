@@ -1,7 +1,7 @@
-public final synthetic class me/nullicorn/mewteaf8/Mutf8InputStreamsKt {
-	public static final fun readMutf8Array (Ljava/io/InputStream;)[C
-	public static final fun readMutf8String (Ljava/io/InputStream;)Ljava/lang/String;
-	public static final fun readMutf8ToAppendable (Ljava/io/InputStream;Ljava/lang/Appendable;)V
+public final class me/nullicorn/mewteaf8/Mutf8InputStreams {
+	public static final fun readArrayFrom (Ljava/io/InputStream;)[C
+	public static final fun readStringFrom (Ljava/io/InputStream;)Ljava/lang/String;
+	public static final fun readToAppendableFrom (Ljava/io/InputStream;Ljava/lang/Appendable;)V
 }
 
 public final class me/nullicorn/mewteaf8/Mutf8Length {
@@ -14,15 +14,21 @@ public final class me/nullicorn/mewteaf8/Mutf8Length {
 	public static synthetic fun of$default ([CIIILjava/lang/Object;)J
 }
 
-public final synthetic class me/nullicorn/mewteaf8/Mutf8OutputStreamsKt {
-	public static final fun writeMutf8Array (Ljava/io/OutputStream;[CIII)V
-	public static final fun writeMutf8Array (Ljava/io/OutputStream;[CLkotlin/ranges/IntRange;I)V
-	public static synthetic fun writeMutf8Array$default (Ljava/io/OutputStream;[CIIIILjava/lang/Object;)V
+public final class me/nullicorn/mewteaf8/Mutf8OutputStreams {
+	public static final fun writeArrayTo (Ljava/io/OutputStream;[C)V
+	public static final fun writeArrayTo (Ljava/io/OutputStream;[CI)V
+	public static final fun writeArrayTo (Ljava/io/OutputStream;[CII)V
+	public static final fun writeArrayTo (Ljava/io/OutputStream;[CIII)V
+	public static synthetic fun writeArrayTo$default (Ljava/io/OutputStream;[CIIIILjava/lang/Object;)V
+	public static final synthetic fun writeMutf8Array (Ljava/io/OutputStream;[CLkotlin/ranges/IntRange;I)V
 	public static synthetic fun writeMutf8Array$default (Ljava/io/OutputStream;[CLkotlin/ranges/IntRange;IILjava/lang/Object;)V
-	public static final fun writeMutf8Sequence (Ljava/io/OutputStream;Ljava/lang/CharSequence;III)V
-	public static final fun writeMutf8Sequence (Ljava/io/OutputStream;Ljava/lang/CharSequence;Lkotlin/ranges/IntRange;I)V
-	public static synthetic fun writeMutf8Sequence$default (Ljava/io/OutputStream;Ljava/lang/CharSequence;IIIILjava/lang/Object;)V
+	public static final synthetic fun writeMutf8Sequence (Ljava/io/OutputStream;Ljava/lang/CharSequence;Lkotlin/ranges/IntRange;I)V
 	public static synthetic fun writeMutf8Sequence$default (Ljava/io/OutputStream;Ljava/lang/CharSequence;Lkotlin/ranges/IntRange;IILjava/lang/Object;)V
+	public static final fun writeSequenceTo (Ljava/io/OutputStream;Ljava/lang/CharSequence;)V
+	public static final fun writeSequenceTo (Ljava/io/OutputStream;Ljava/lang/CharSequence;I)V
+	public static final fun writeSequenceTo (Ljava/io/OutputStream;Ljava/lang/CharSequence;II)V
+	public static final fun writeSequenceTo (Ljava/io/OutputStream;Ljava/lang/CharSequence;III)V
+	public static synthetic fun writeSequenceTo$default (Ljava/io/OutputStream;Ljava/lang/CharSequence;IIIILjava/lang/Object;)V
 }
 
 public abstract class me/nullicorn/mewteaf8/Mutf8Sink {

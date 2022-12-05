@@ -1,4 +1,4 @@
-@file:JvmSynthetic
+@file:JvmName("Mutf8InputStreams")
 
 package me.nullicorn.mewteaf8
 
@@ -23,6 +23,7 @@ import java.io.InputStream
  * @see[StreamMutf8Source.readToString]
  */
 @Throws(IOException::class, EOFException::class, UTFDataFormatException::class)
+@JvmName("readStringFrom")
 fun InputStream.readMutf8String(): String {
     val source = StreamMutf8Source(stream = this)
     val mutf8Length = source.readLength()
@@ -48,6 +49,7 @@ fun InputStream.readMutf8String(): String {
  * @see[StreamMutf8Source.readToArray]
  */
 @Throws(IOException::class, EOFException::class, UTFDataFormatException::class)
+@JvmName("readArrayFrom")
 fun InputStream.readMutf8Array(): CharArray {
     val source = StreamMutf8Source(stream = this)
     val mutf8Length = source.readLength()
@@ -73,6 +75,7 @@ fun InputStream.readMutf8Array(): CharArray {
  * @see[StreamMutf8Source.readToAppendable]
  */
 @Throws(IOException::class, EOFException::class, UTFDataFormatException::class)
+@JvmName("readToAppendableFrom")
 fun InputStream.readMutf8ToAppendable(destination: Appendable) {
     val source = StreamMutf8Source(stream = this)
     val mutf8Length = source.readLength()

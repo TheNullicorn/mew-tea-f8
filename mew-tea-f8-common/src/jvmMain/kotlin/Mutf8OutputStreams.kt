@@ -1,9 +1,8 @@
-@file:JvmSynthetic
+@file:JvmName("Mutf8OutputStreams")
 
 package me.nullicorn.mewteaf8
 
 import java.io.OutputStream
-import kotlin.jvm.Throws
 
 private const val DEFAULT_BYTES_PER_WRITE = 1024
 private const val MAX_MUTF8_LENGTH = 65535
@@ -30,6 +29,8 @@ private const val MAX_MUTF8_LENGTH = 65535
  * @see[StreamMutf8Sink.writeFromSequence]
  */
 @Throws(IOException::class)
+@JvmName("writeSequenceTo")
+@JvmOverloads
 fun OutputStream.writeMutf8Sequence(
     characters: CharSequence,
     startIndex: Int = 0,
@@ -64,6 +65,7 @@ fun OutputStream.writeMutf8Sequence(
  * @see[StreamMutf8Sink.writeFromSequence]
  */
 @Throws(IOException::class)
+@JvmSynthetic
 fun OutputStream.writeMutf8Sequence(
     characters: CharSequence,
     range: IntRange = 0..characters.lastIndex,
@@ -92,6 +94,8 @@ fun OutputStream.writeMutf8Sequence(
  * @see[StreamMutf8Sink.writeFromArray]
  */
 @Throws(IOException::class)
+@JvmName("writeArrayTo")
+@JvmOverloads
 fun OutputStream.writeMutf8Array(
     characters: CharArray,
     startIndex: Int = 0,
@@ -126,6 +130,7 @@ fun OutputStream.writeMutf8Array(
  * @see[StreamMutf8Sink.writeFromArray]
  */
 @Throws(IOException::class)
+@JvmSynthetic
 fun OutputStream.writeMutf8Array(
     characters: CharArray,
     range: IntRange = 0..characters.lastIndex,

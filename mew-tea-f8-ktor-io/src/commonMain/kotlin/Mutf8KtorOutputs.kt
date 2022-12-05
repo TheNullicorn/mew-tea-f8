@@ -1,8 +1,10 @@
-@file:JvmSynthetic
+@file:JvmName("Mutf8KtorOutputs")
 
 package me.nullicorn.mewteaf8
 
 import io.ktor.utils.io.core.*
+import kotlin.jvm.JvmName
+import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmSynthetic
 
 private const val DEFAULT_BYTES_PER_WRITE = 1024
@@ -30,6 +32,8 @@ private const val MAX_MUTF8_LENGTH = 65535
  * @see[OutputMutf8Sink.writeFromSequence]
  */
 @Throws(IOException::class)
+@JvmName("writeSequenceTo")
+@JvmOverloads
 fun Output.writeMutf8Sequence(
     characters: CharSequence,
     startIndex: Int = 0,
@@ -64,6 +68,7 @@ fun Output.writeMutf8Sequence(
  * @see[OutputMutf8Sink.writeFromSequence]
  */
 @Throws(IOException::class)
+@JvmSynthetic
 fun Output.writeMutf8Sequence(
     characters: CharSequence,
     range: IntRange = 0..characters.lastIndex,
@@ -92,6 +97,8 @@ fun Output.writeMutf8Sequence(
  * @see[OutputMutf8Sink.writeFromArray]
  */
 @Throws(IOException::class)
+@JvmName("writeArrayTo")
+@JvmOverloads
 fun Output.writeMutf8Array(
     characters: CharArray,
     startIndex: Int = 0,
@@ -126,6 +133,7 @@ fun Output.writeMutf8Array(
  * @see[OutputMutf8Sink.writeFromArray]
  */
 @Throws(IOException::class)
+@JvmSynthetic
 fun Output.writeMutf8Array(
     characters: CharArray,
     range: IntRange = 0..characters.lastIndex,

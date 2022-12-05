@@ -3,21 +3,27 @@ public final class me/nullicorn/mewteaf8/InputMutf8Source : me/nullicorn/mewteaf
 	public fun readLength ()I
 }
 
-public final synthetic class me/nullicorn/mewteaf8/Mutf8KtorInputsKt {
-	public static final fun readMutf8Array (Lio/ktor/utils/io/core/Input;)[C
-	public static final fun readMutf8String (Lio/ktor/utils/io/core/Input;)Ljava/lang/String;
-	public static final fun readMutf8ToAppendable (Lio/ktor/utils/io/core/Input;Ljava/lang/Appendable;)V
+public final class me/nullicorn/mewteaf8/Mutf8KtorInputs {
+	public static final fun readArrayFrom (Lio/ktor/utils/io/core/Input;)[C
+	public static final fun readStringFrom (Lio/ktor/utils/io/core/Input;)Ljava/lang/String;
+	public static final fun readToAppendableFrom (Lio/ktor/utils/io/core/Input;Ljava/lang/Appendable;)V
 }
 
-public final synthetic class me/nullicorn/mewteaf8/Mutf8KtorOutputsKt {
-	public static final fun writeMutf8Array (Lio/ktor/utils/io/core/Output;[CIII)V
-	public static final fun writeMutf8Array (Lio/ktor/utils/io/core/Output;[CLkotlin/ranges/IntRange;I)V
-	public static synthetic fun writeMutf8Array$default (Lio/ktor/utils/io/core/Output;[CIIIILjava/lang/Object;)V
+public final class me/nullicorn/mewteaf8/Mutf8KtorOutputs {
+	public static final fun writeArrayTo (Lio/ktor/utils/io/core/Output;[C)V
+	public static final fun writeArrayTo (Lio/ktor/utils/io/core/Output;[CI)V
+	public static final fun writeArrayTo (Lio/ktor/utils/io/core/Output;[CII)V
+	public static final fun writeArrayTo (Lio/ktor/utils/io/core/Output;[CIII)V
+	public static synthetic fun writeArrayTo$default (Lio/ktor/utils/io/core/Output;[CIIIILjava/lang/Object;)V
+	public static final synthetic fun writeMutf8Array (Lio/ktor/utils/io/core/Output;[CLkotlin/ranges/IntRange;I)V
 	public static synthetic fun writeMutf8Array$default (Lio/ktor/utils/io/core/Output;[CLkotlin/ranges/IntRange;IILjava/lang/Object;)V
-	public static final fun writeMutf8Sequence (Lio/ktor/utils/io/core/Output;Ljava/lang/CharSequence;III)V
-	public static final fun writeMutf8Sequence (Lio/ktor/utils/io/core/Output;Ljava/lang/CharSequence;Lkotlin/ranges/IntRange;I)V
-	public static synthetic fun writeMutf8Sequence$default (Lio/ktor/utils/io/core/Output;Ljava/lang/CharSequence;IIIILjava/lang/Object;)V
+	public static final synthetic fun writeMutf8Sequence (Lio/ktor/utils/io/core/Output;Ljava/lang/CharSequence;Lkotlin/ranges/IntRange;I)V
 	public static synthetic fun writeMutf8Sequence$default (Lio/ktor/utils/io/core/Output;Ljava/lang/CharSequence;Lkotlin/ranges/IntRange;IILjava/lang/Object;)V
+	public static final fun writeSequenceTo (Lio/ktor/utils/io/core/Output;Ljava/lang/CharSequence;)V
+	public static final fun writeSequenceTo (Lio/ktor/utils/io/core/Output;Ljava/lang/CharSequence;I)V
+	public static final fun writeSequenceTo (Lio/ktor/utils/io/core/Output;Ljava/lang/CharSequence;II)V
+	public static final fun writeSequenceTo (Lio/ktor/utils/io/core/Output;Ljava/lang/CharSequence;III)V
+	public static synthetic fun writeSequenceTo$default (Lio/ktor/utils/io/core/Output;Ljava/lang/CharSequence;IIIILjava/lang/Object;)V
 }
 
 public final class me/nullicorn/mewteaf8/OutputMutf8Sink : me/nullicorn/mewteaf8/Mutf8Sink {

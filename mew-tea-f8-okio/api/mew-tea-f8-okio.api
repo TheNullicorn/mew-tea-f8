@@ -1,18 +1,24 @@
-public final synthetic class me/nullicorn/mewteaf8/Mutf8OkioSinksKt {
-	public static final fun writeMutf8Array (Lokio/Sink;[CIII)V
-	public static final fun writeMutf8Array (Lokio/Sink;[CLkotlin/ranges/IntRange;I)V
-	public static synthetic fun writeMutf8Array$default (Lokio/Sink;[CIIIILjava/lang/Object;)V
+public final class me/nullicorn/mewteaf8/Mutf8OkioSinks {
+	public static final fun writeArrayTo (Lokio/Sink;[C)V
+	public static final fun writeArrayTo (Lokio/Sink;[CI)V
+	public static final fun writeArrayTo (Lokio/Sink;[CII)V
+	public static final fun writeArrayTo (Lokio/Sink;[CIII)V
+	public static synthetic fun writeArrayTo$default (Lokio/Sink;[CIIIILjava/lang/Object;)V
+	public static final synthetic fun writeMutf8Array (Lokio/Sink;[CLkotlin/ranges/IntRange;I)V
 	public static synthetic fun writeMutf8Array$default (Lokio/Sink;[CLkotlin/ranges/IntRange;IILjava/lang/Object;)V
-	public static final fun writeMutf8Sequence (Lokio/Sink;Ljava/lang/CharSequence;III)V
-	public static final fun writeMutf8Sequence (Lokio/Sink;Ljava/lang/CharSequence;Lkotlin/ranges/IntRange;I)V
-	public static synthetic fun writeMutf8Sequence$default (Lokio/Sink;Ljava/lang/CharSequence;IIIILjava/lang/Object;)V
+	public static final synthetic fun writeMutf8Sequence (Lokio/Sink;Ljava/lang/CharSequence;Lkotlin/ranges/IntRange;I)V
 	public static synthetic fun writeMutf8Sequence$default (Lokio/Sink;Ljava/lang/CharSequence;Lkotlin/ranges/IntRange;IILjava/lang/Object;)V
+	public static final fun writeSequenceTo (Lokio/Sink;Ljava/lang/CharSequence;)V
+	public static final fun writeSequenceTo (Lokio/Sink;Ljava/lang/CharSequence;I)V
+	public static final fun writeSequenceTo (Lokio/Sink;Ljava/lang/CharSequence;II)V
+	public static final fun writeSequenceTo (Lokio/Sink;Ljava/lang/CharSequence;III)V
+	public static synthetic fun writeSequenceTo$default (Lokio/Sink;Ljava/lang/CharSequence;IIIILjava/lang/Object;)V
 }
 
-public final synthetic class me/nullicorn/mewteaf8/Mutf8OkioSourcesKt {
-	public static final fun readMutf8Array (Lokio/Source;)[C
-	public static final fun readMutf8String (Lokio/Source;)Ljava/lang/String;
-	public static final fun readMutf8ToAppendable (Lokio/Source;Ljava/lang/Appendable;)V
+public final class me/nullicorn/mewteaf8/Mutf8OkioSources {
+	public static final fun readArrayFrom (Lokio/Source;)[C
+	public static final fun readStringFrom (Lokio/Source;)Ljava/lang/String;
+	public static final fun readToAppendableFrom (Lokio/Source;Ljava/lang/Appendable;)V
 }
 
 public final class me/nullicorn/mewteaf8/OkioMutf8Sink : me/nullicorn/mewteaf8/Mutf8Sink {

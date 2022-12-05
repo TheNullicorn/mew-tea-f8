@@ -1,9 +1,9 @@
-@file:JvmSynthetic
+@file:JvmName("Mutf8OkioSources")
 
 package me.nullicorn.mewteaf8
 
 import okio.Source
-import kotlin.jvm.JvmSynthetic
+import kotlin.jvm.JvmName
 
 /**
  * Creates a [OkioMutf8Source] around the receiver, reads the length & contents of a Modified UTF-8 string, and then
@@ -24,6 +24,7 @@ import kotlin.jvm.JvmSynthetic
  * @see[OkioMutf8Source.readToString]
  */
 @Throws(IOException::class, EOFException::class, UTFDataFormatException::class)
+@JvmName("readStringFrom")
 fun Source.readMutf8String(): String {
     val source = OkioMutf8Source(source = this)
     val mutf8Length = source.readLength()
@@ -49,6 +50,7 @@ fun Source.readMutf8String(): String {
  * @see[OkioMutf8Source.readToArray]
  */
 @Throws(IOException::class, EOFException::class, UTFDataFormatException::class)
+@JvmName("readArrayFrom")
 fun Source.readMutf8Array(): CharArray {
     val source = OkioMutf8Source(source = this)
     val mutf8Length = source.readLength()
@@ -74,6 +76,7 @@ fun Source.readMutf8Array(): CharArray {
  * @see[OkioMutf8Source.readToAppendable]
  */
 @Throws(IOException::class, EOFException::class, UTFDataFormatException::class)
+@JvmName("readToAppendableFrom")
 fun Source.readMutf8ToAppendable(destination: Appendable) {
     val source = OkioMutf8Source(source = this)
     val mutf8Length = source.readLength()
