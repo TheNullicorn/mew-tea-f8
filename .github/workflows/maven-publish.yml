@@ -1,0 +1,73 @@
+name: Publish to Sonatype OSSRH
+
+# ======================================================================================================================
+
+on:
+  # Run when a new release is published.
+  release:
+    types: [ 'published' ]
+
+  # Run when manually triggered via GitHub's UI.
+  workflow_dispatch: # No configuration needed.
+
+# ======================================================================================================================
+
+jobs:
+  publish-all:
+    name: Publish All Targets with Gradle
+
+    # Publish from several platforms, each publishing different groups of targets from our Kotlin configuration:
+    # - macOS for publishing our native macOS, iOS, watchOS, and tvOS targets
+    # - Ubuntu for publishing our JVM, JavaScript, WebAssembly, and native Linux targets
+    # - Windows for publishing our native Windows targets
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - 'macos-latest'
+          - 'ubuntu-latest'
+          - 'windows-latest'
+
+    # For the runner that's on Linux, tell it to also test our JVM, JavaScript, and WebAssembly targets, in addition to
+    # its normal Linux-specific native targets.
+    env:
+      MEW_TARGET: ${{ startsWith(matrix.os, 'ubuntu') && 'all' || 'native' }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+        # Use Java 8 for building & testing, and cache Gradle files so subsequent builds are faster.
+      - name: Set up JDK 8
+        uses: actions/setup-java@v3
+        with:
+          java-version: '8'
+          distribution: 'zulu'
+          cache: 'gradle'
+
+        # Verify that our "./gradle/wrapper/gradle-wrapper.jar" has not been tampered with.
+      - name: Validate Gradle Wrapper
+        uses: gradle/wrapper-validation-action@v1
+
+        # Supply the build with the necessary information to publish.
+      - name: Configure Publications
+        run: |
+          mkdir --parents ~/.gradle
+          touch ~/.gradle/gradle.properties
+          echo "
+          mew-tea-f8.publishing.enabled=true
+          mew-tea-f8.publishing.username=${{ secrets.MEW_OSSRH_USERNAME }}
+          mew-tea-f8.publishing.password=${{ secrets.MEW_OSSRH_PASSWORD }}
+          mew-tea-f8.publishing.signing-key=${{ secrets.MEW_GPG_PRIVATE_KEY }}
+          mew-tea-f8.publishing.signing-key-id=${{ secrets.MEW_GPG_PRIVATE_KEY_ID }}
+          mew-tea-f8.publishing.signing-key-password=${{ secrets.MEW_GPG_PRIVATE_KEY_PASSWORD }}
+          mew-tea-f8.github.token=${{ secrets.MEW_GITHUB_TOKEN }}
+          mew-tea-f8.github.tree=${{ github.sha }}
+          " > ~/.gradle/gradle.properties
+
+        # Build, run tests, ensure ABI dumps are up-to-date (from "binary-compatibility-validator" Gradle plugin), and
+        # then finally publish our artifacts to Sonatype OSSRH.
+      - name: Publish
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: wrapper
+          arguments: publish

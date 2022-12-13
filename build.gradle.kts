@@ -1,15 +1,10 @@
 import me.nullicorn.mewteaf8.gradle.*
-import me.nullicorn.mewteaf8.gradle.publishing.*
-import org.gradle.plugins.ide.idea.model.IdeaModel
-import org.jetbrains.gradle.ext.packagePrefix
-import org.jetbrains.gradle.ext.settings
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     id(libs.plugins.kotlin.documentation.get().pluginId)
+    id(libs.plugins.intellij.settings.get().pluginId)
     alias(libs.plugins.binary.compatibility) apply false
-    alias(libs.plugins.intellij.settings) apply false
 }
 
 group = "me.nullicorn"
@@ -28,17 +23,13 @@ subprojects {
         mavenCentral()
     }
 
-    configure<IdeaModel> {
-        val rootPackage = MewTeaF8BuildProperties.getRootPackageOf(this@subprojects)
+    // Inherit the root project's group & version.
+    group = rootProject.group
+    version = rootProject.version
 
-        module {
-            settings {
-                for (sourceSet in kotlinExtension.sourceSets)
-                    for (sourceDir in sourceSet.kotlin.srcDirs) {
-                        val relativeSourceDir = sourceDir.toRelativeString(base = projectDir)
-                        packagePrefix[relativeSourceDir] = rootPackage
-                    }
-            }
+    `mew-tea-f8` {
+        publishing {
+            fillPomUsingGitHub()
         }
     }
 }

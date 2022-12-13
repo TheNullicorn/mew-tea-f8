@@ -1,5 +1,4 @@
 import me.nullicorn.mewteaf8.gradle.*
-import me.nullicorn.mewteaf8.gradle.targets.*
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
@@ -10,33 +9,43 @@ repositories {
     mavenCentral()
 }
 
-@Suppress("UNUSED_VARIABLE", "OPT_IN_USAGE")
-kotlin {
-    registerTargetsForMewTeaF8(project, /* excludedTargets = */ ::wasm)
-    configureSourceSetsForMewTeaF8(project)
+`mew-tea-f8` {
+    // Disable Maven publications & documentation for this module since it's only used internally for unit tests. The
+    // same is done for the "binary-compatibility-validator" plugin later in this file because it doesn't have a public
+    // API that we need to worry about changes to.
+    publishing.enabled = false
+    documentation.enabled.set(false)
 
-    // This module is only used internally (it's not published), so we don't have to worry about its API changing.
-    apiValidation.validationDisabled = true
+    compilation {
+        @Suppress("OPT_IN_USAGE")
+        registerTargets(/* exclude = */ kotlin::wasm)
+    }
+}
 
-    sourceSets {
-        val commonMain by getting {
-            dependencies {
-                api(project(":mew-tea-f8-common"))
-                api(kotlin("test"))
-            }
+@Suppress("UNUSED_VARIABLE")
+kotlin.sourceSets {
+    val commonMain by getting {
+        dependencies {
+            api(project(":mew-tea-f8-common"))
+            api(kotlin("test"))
         }
+    }
 
-        // If we're building for JVM, also explicitly depend on `kotlin-test-junit`. See the note below for details.
-        if (this@kotlin.hasJvmCompilations) {
-            val jvmMain by getting {
+    // If we're building for JVM, also explicitly depend on `kotlin-test-junit`. See the note below for details.
+    if (`mew-tea-f8`.compilation.buildMode.includesJvm) {
+        this.whenObjectAdded {
+            if (this.name == "jvmMain") {
                 dependencies {
                     // "kotlin-test" is set up weird and for some reason the Java API isn't in the classpath at compile
-                    // time. Might have something to do with depending on it in a `main` source-set instead of a `test`
-                    // one? Either way, that's why it's explicitly declared here, whereas normally the dependency in
-                    // `commonMain` (or `commonTest`) would transitively add it to the classpath.
+                    // time. It might have something to do with us depending on it in a "main" source-set instead of a
+                    // "test" one? Either way, that's why it's explicitly declared here, whereas normally the dependency
+                    // `kotlin("test")` would transitively add it to the classpath.
                     implementation(kotlin("test-junit"))
                 }
             }
         }
     }
 }
+
+// This module is only used internally (it's not published), so we don't have to worry about its API changing.
+apiValidation.validationDisabled = true

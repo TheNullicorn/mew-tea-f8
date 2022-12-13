@@ -1,9 +1,8 @@
 import me.nullicorn.mewteaf8.gradle.*
-import me.nullicorn.mewteaf8.gradle.publishing.*
-import me.nullicorn.mewteaf8.gradle.targets.*
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
+    // These 2 plugins are needed specifically for benchmarks; see further down.
     alias(libs.plugins.kotlin.benchmark)
     alias(libs.plugins.kotlin.allopen)
 }
@@ -12,22 +11,29 @@ repositories {
     mavenCentral()
 }
 
-@Suppress("UNUSED_VARIABLE", "OPT_IN_USAGE")
-kotlin {
-    registerTargetsForMewTeaF8(project, /* excludedTargets = */ ::wasm)
-    configureSourceSetsForMewTeaF8(project)
-    configureDocumentationForMewTeaF8(excludeSourceSetIf = { "[Bb]enchmark".toRegex() in it.name })
-
-    sourceSets {
-        val commonTest by getting {
-            dependencies {
-                implementation(project(":mew-tea-f8-test-helpers"))
-            }
-        }
+@Suppress("OPT_IN_USAGE")
+`mew-tea-f8` {
+    compilation {
+        registerTargets(/* excluded = */ kotlin::wasm)
     }
 
-    // Register our benchmarks (ONLY IF WE ALREADY HAVE A JVM TARGET/SOURCE-SET/COMPILATION).
-    if (this@kotlin.hasJvmCompilations) {
+    source {
+        registerNonJvmSourceSet()
+    }
+}
+
+@Suppress("UNUSED_VARIABLE")
+kotlin.sourceSets {
+    val commonTest by getting {
+        dependencies {
+            implementation(project(":mew-tea-f8-test-helpers"))
+        }
+    }
+}
+
+// Register our benchmarks (ONLY IF WE ALREADY HAVE A JVM TARGET/SOURCE-SET/COMPILATION).
+if (`mew-tea-f8`.compilation.buildMode.includesJvm)
+    @Suppress("UNUSED_VARIABLE") kotlin {
         // Add a separate compilation for our benchmarks.
         jvm {
             compilations {
@@ -66,4 +72,3 @@ kotlin {
         // Register our benchmark source-set with the "kotlinx-benchmark" Gradle plugin.
         benchmark.targets.register("jvmBenchmark")
     }
-}
