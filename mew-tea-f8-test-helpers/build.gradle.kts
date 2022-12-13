@@ -27,24 +27,21 @@ kotlin.sourceSets {
     val commonMain by getting {
         dependencies {
             api(project(":mew-tea-f8-common"))
-            api(kotlin("test"))
+            implementation(libs.bundles.kotlin.test)
         }
     }
 
     // If we're building for JVM, also explicitly depend on `kotlin-test-junit`. See the note below for details.
-    if (`mew-tea-f8`.compilation.buildMode.includesJvm) {
-        this.whenObjectAdded {
-            if (this.name == "jvmMain") {
-                dependencies {
-                    // "kotlin-test" is set up weird and for some reason the Java API isn't in the classpath at compile
-                    // time. It might have something to do with us depending on it in a "main" source-set instead of a
-                    // "test" one? Either way, that's why it's explicitly declared here, whereas normally the dependency
-                    // `kotlin("test")` would transitively add it to the classpath.
-                    implementation(kotlin("test-junit"))
-                }
+    if (`mew-tea-f8`.compilation.buildMode.includesJvm)
+        getByName("jvmMain") {
+            dependencies {
+                // "kotlin-test" is set up weird and for some reason the Java API isn't in the classpath at compile
+                // time. It might have something to do with us depending on it in a "main" source-set instead of a
+                // "test" one? Either way, that's why it's explicitly declared here, whereas normally the dependency
+                // `kotlin("test")` would transitively add it to the classpath.
+                implementation(libs.bundles.kotlin.test.jvm)
             }
         }
-    }
 }
 
 // This module is only used internally (it's not published), so we don't have to worry about its API changing.

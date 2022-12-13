@@ -20,3 +20,10 @@ okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
 ktor-io = { module = "io.ktor:ktor-io", version.ref = "ktor" }
 kotlin-benchmark = { module = "org.jetbrains.kotlinx:kotlinx-benchmark-runtime", version.ref = "kotlin-benchmark" }
 github-api = { module = "org.kohsuke:github-api", version.ref = "github-api" }
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+kotlin-test-jvm = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
+kotlin-test-annotations = { module = "org.jetbrains.kotlin:kotlin-test-annotations-common", version.ref = "kotlin" }
+
+[bundles]
+kotlin-test = [ "kotlin-test", "kotlin-test-annotations" ]
+kotlin-test-jvm = [ "kotlin-test-jvm", "kotlin-test-annotations" ]

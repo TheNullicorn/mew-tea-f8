@@ -31,6 +31,7 @@ kotlin.sourceSets {
     }
     val commonTest by getting {
         dependencies {
+            implementation(libs.bundles.kotlin.test)
             implementation(project(":mew-tea-f8-test-helpers"))
         }
     }
