@@ -50,8 +50,9 @@ jobs:
 
         # Supply the build with the necessary information to publish.
       - name: Configure Publications
+        shell: bash
         run: |
-          mkdir --parents ~/.gradle
+          mkdir -p ~/.gradle
           touch ~/.gradle/gradle.properties
           echo "
           mew-tea-f8.publishing.enabled=true
