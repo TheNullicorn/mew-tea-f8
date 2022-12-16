@@ -86,39 +86,6 @@ class MewPublishingConfig(private val project: Project) {
     val repositoryPassword: String? = project.properties["mew-tea-f8.publishing.password"] as? String
 
     /**
-     * The ASCII-armored GPG secret key used to sign all publications.
-     *
-     * Configured using the Gradle property "`mew-tea-f8.publishing.signing-key`"; do so via environment variable or in
-     * "`$GRADLE_HOME/gradle.properties`" to prevent accidentally committing ot through the project's
-     * "`gradle.properties`".
-     *
-     * If the publications are for Maven Central, this is required.
-     */
-    val signingKey: String? = project.properties["mew-tea-f8.publishing.signing-key"] as? String
-
-    /**
-     * The ID of the secret GPG key or subkey configured via the [signingKey].
-     *
-     * Configured using the Gradle property "`mew-tea-f8.publishing.signing-key-id`"; do so via environment variable or
-     * in "`$GRADLE_HOME/gradle.properties`" to prevent accidentally committing ot through the project's
-     * "`gradle.properties`".
-     *
-     * If a subkey is being used to sign publications, then this is required.
-     */
-    val signingKeyId: String? = project.properties["mew-tea-f8.publishing.signing-key-id"] as? String
-
-    /**
-     * The password for the secret GPG key or subkey configured via the [signingKey].
-     *
-     * Configured using the Gradle property "`mew-tea-f8.publishing.signing-key-password`"; do so via environment
-     * variable or in "`$GRADLE_HOME/gradle.properties`" to prevent accidentally committing ot through the project's
-     * "`gradle.properties`".
-     *
-     * If [signingKey] is configured then this must be as well.
-     */
-    val signingKeyPassword: String? = project.properties["mew-tea-f8.publishing.signing-key-password"] as? String
-
-    /**
      * Fills in the POM of publications using metadata from a [configured][MewGitHubConfig] GitHub repository.
      *
      * This sets the [mavenPom] property to a [GitHubMewPomConfigurator] configured using the project's [GitHub
@@ -199,13 +166,7 @@ class MewPublishingConfig(private val project: Project) {
                 }
 
                 // Sign all of our artifacts; required for Maven Central to accept them.
-                project.signing.run {
-                    // If an in-memory signing key is configured, use that.
-                    if (signingKey != null && signingKey.isNotBlank())
-                        useInMemoryPgpKeys(signingKeyId, signingKey, signingKeyPassword)
-
-                    sign(publications)
-                }
+                project.signing.sign(publications)
 
                 // Publishing tasks aren't automatically dependent on the signing tasks for some reason, so we have to
                 // link them up manually. It still works without this, but it left a bunch of warnings while publishing.
