@@ -68,7 +68,7 @@ jobs:
           mew-tea-f8.publishing.password=${{ secrets.MEW_OSSRH_PASSWORD }}
           signing.keyId=${{ secrets.MEW_GPG_PRIVATE_KEY_ID }}
           signing.password=${{ secrets.MEW_GPG_PRIVATE_KEY_PASSWORD }}
-          signing.secretKeyRingFile=$HOME/.gradle/maven-signing.kbx
+          signing.secretKeyRingFile=~/.gradle/maven-signing.kbx
           " > ~/.gradle/gradle.properties
 
         # Build, run tests, ensure ABI dumps are up-to-date (from "binary-compatibility-validator" Gradle plugin), and

@@ -19,6 +19,7 @@ import org.jetbrains.dokka.gradle.DokkaTask
 import java.net.MalformedURLException
 import java.net.URI
 import java.net.URL
+import java.nio.file.Paths
 
 /**
  * Configuration for the project's publications to Maven repositories, especially Maven Central (via Sonatype OSSRH).
@@ -163,6 +164,19 @@ class MewPublishingConfig(private val project: Project) {
 
                     // Fill in additional metadata for the pom.xml.
                     mavenPom.get().invoke(pom)
+                }
+
+                "signing.secretKeyRingFile".let { keyRingPropertyName ->
+                    var keyRingPath = project.properties[keyRingPropertyName] as? String ?: return@let
+
+                    // If the path starts with a tilde '~', treat it as unix would and replace the tilde with the user's
+                    // home directory, even if we're not on a unix system.
+                    if (keyRingPath.startsWith("~")) {
+                        val userBasedKeyRingPath =
+                            Paths.get(System.getProperty("user.home"), keyRingPath.substring(startIndex = 1))
+                                .toAbsolutePath()
+                        project.setProperty(keyRingPropertyName, userBasedKeyRingPath.toString())
+                    }
                 }
 
                 // Sign all of our artifacts; required for Maven Central to accept them.
