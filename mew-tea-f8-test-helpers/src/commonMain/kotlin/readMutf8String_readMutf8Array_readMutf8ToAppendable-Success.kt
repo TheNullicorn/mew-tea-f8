@@ -23,10 +23,7 @@ abstract class ReadMutf8SuccessfullySharedTests<Input> : ReadMutf8Tests<Input> {
             })
     }
 
-    private inline fun assertAllMethodsProduce(
-        characters: CharArray,
-        noinline populateInput: MutableList<Byte>.() -> Unit
-    ) {
+    private fun assertAllMethodsProduce(characters: CharArray, populateInput: MutableList<Byte>.() -> Unit) {
         var input = Input(populateInput)
         assertContentEquals(expected = characters, actual = input.readMutf8Array())
 
