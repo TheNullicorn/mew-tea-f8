@@ -30,6 +30,7 @@ jobs:
     # in addition to its normal Windows-specific native targets.
     env:
       MEW_TARGET: ${{ startsWith(matrix.os, 'windows') && 'all' || 'native' }}
+      MEW_MAVEN_REPO_NAME: ${{ github.event_name == 'release'  && 'Staging' || 'Snapshot' }}
 
     steps:
       - uses: actions/checkout@v3
@@ -75,4 +76,4 @@ jobs:
         uses: gradle/gradle-build-action@v2
         with:
           gradle-version: wrapper
-          arguments: publish
+          arguments: publishAllPublicationsTo${{ env.MEW_MAVEN_REPO_NAME }}Repository
