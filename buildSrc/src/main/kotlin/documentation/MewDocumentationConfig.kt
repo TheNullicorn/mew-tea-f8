@@ -5,7 +5,7 @@ import me.nullicorn.mewteaf8.gradle.kotlin
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
 import org.gradle.kotlin.dsl.withType
-import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.dokka.gradle.AbstractDokkaLeafTask
 import org.jetbrains.dokka.gradle.GradleDokkaSourceSetBuilder
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import java.io.File
@@ -92,7 +92,7 @@ class MewDocumentationConfig(private val project: Project, private val github: M
             if (!this@MewDocumentationConfig.enabled.get())
                 return@afterEvaluate
 
-            tasks.withType<DokkaTask>().configureEach taskConfig@{
+            tasks.withType<AbstractDokkaLeafTask>().configureEach taskConfig@{
                 dokkaSourceSets.configureEach sourceSetConfig@{
                     // Exclude source-sets that match any of the configured exclusion rules.
                     if (excludedSourceSetRules.any { it(this) }) {
