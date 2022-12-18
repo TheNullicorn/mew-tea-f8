@@ -18,6 +18,7 @@ import org.gradle.plugins.signing.Sign
 import org.jetbrains.dokka.gradle.DokkaTask
 import java.net.MalformedURLException
 import java.net.URI
+import java.net.URISyntaxException
 import java.net.URL
 import java.nio.file.Paths
 
@@ -111,25 +112,6 @@ class MewPublishingConfig(private val project: Project) {
             if (!mavenPom.isPresent)
                 throw InvalidUserDataException("mavenPom must be configured when publishing is enabled")
 
-            // Determine the URL of the repository we'll be publishing to.
-            val repositoryUrl: String = when {
-                // If both URLs are non-null, use the appropriate one based on whether the version of the project itself
-                // is a snapshot.
-                snapshotRepositoryUrl != null && stagingRepositoryUrl != null ->
-                    if (project.version.toString().endsWith("-SNAPSHOT")) snapshotRepositoryUrl
-                    else stagingRepositoryUrl
-
-                // If one of them is null, then use the non-null one, regardless of the project's version.
-                snapshotRepositoryUrl != null -> snapshotRepositoryUrl
-                stagingRepositoryUrl != null -> stagingRepositoryUrl
-
-                // If no URL is configured, exit unseccessfully.
-                else -> throw InvalidUserDataException("Publishing is enabled but no Maven repository's URL was set-up")
-            }
-
-            // Add the Dokka plugin (if it wasn't already) so that our "dokkaHtmlJar" task can use its "dokkaHtml" task.
-            project.plugins.applyDokkaPluginIfMissing()
-
             // Create a task that bundles dokka's HTML output into a jar file.
             val kdocJarTask = project.tasks.register<Jar>("dokkaHtmlJar") {
                 // Get the task that generates the actual KDoc pages.
@@ -148,12 +130,32 @@ class MewPublishingConfig(private val project: Project) {
             // Configure the publications themselves (run after the project's source-sets & such are all set-up).
             project.publishing.run {
                 repositories {
-                    maven {
-                        name = "ossrh"
-                        url = URI(repositoryUrl)
-                        credentials {
-                            username = repositoryUsername ?: ""
-                            password = repositoryPassword ?: ""
+                    fun String.toUriOrElseNull(): URI? =
+                        try {
+                            URI(this)
+                        } catch (cause: URISyntaxException) {
+                            null
+                        }
+
+                    snapshotRepositoryUrl?.toUriOrElseNull()?.let { repoUri ->
+                        maven {
+                            name = "Snapshot"
+                            url = repoUri
+                            credentials {
+                                username = repositoryUsername ?: ""
+                                password = repositoryPassword ?: ""
+                            }
+                        }
+                    }
+
+                    stagingRepositoryUrl?.toUriOrElseNull()?.let { repoUri ->
+                        maven {
+                            name = "Staging"
+                            url = repoUri
+                            credentials {
+                                username = repositoryUsername ?: ""
+                                password = repositoryPassword ?: ""
+                            }
                         }
                     }
                 }

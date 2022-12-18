@@ -1,6 +1,5 @@
 package me.nullicorn.mewteaf8.gradle.documentation
 
-import me.nullicorn.mewteaf8.gradle.applyDokkaPluginIfMissing
 import me.nullicorn.mewteaf8.gradle.github.MewGitHubConfig
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
@@ -89,9 +88,6 @@ class MewDocumentationConfig(private val project: Project, private val github: M
             if (!this@MewDocumentationConfig.enabled.get())
                 return@afterEvaluate
 
-            // Register the Dokka plugin for the module if it isn't already.
-            plugins.applyDokkaPluginIfMissing()
-
             tasks.withType<DokkaTask>().configureEach taskConfig@{
                 dokkaSourceSets.configureEach sourceSetConfig@{
                     // Exclude source-sets that match any of the configured exclusion rules.
@@ -100,7 +96,7 @@ class MewDocumentationConfig(private val project: Project, private val github: M
                         return@sourceSetConfig
                     }
 
-                    val currentName: String = displayName.getOrElse(name)
+                    val currentName: String = displayName.orNull ?: name
                     val newName: String = platformNameReplacements.entries
                         .firstOrNull { it.key.equals(currentName, ignoreCase = true) }
                         ?.value

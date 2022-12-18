@@ -2,6 +2,13 @@ import me.nullicorn.mewteaf8.gradle.*
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
+    id(libs.plugins.kotlin.multiplatform.get().pluginId)
+    id(libs.plugins.kotlin.documentation.get().pluginId)
+    id(libs.plugins.binary.compatibility.get().pluginId)
+    id(libs.plugins.intellij.settings.get().pluginId)
+    id("maven-publish")
+    id("signing")
+
     // These 2 plugins are needed specifically for benchmarks; see further down.
     alias(libs.plugins.kotlin.benchmark)
     alias(libs.plugins.kotlin.allopen)
