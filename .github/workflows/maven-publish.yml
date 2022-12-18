@@ -18,20 +18,18 @@ jobs:
 
     # Publish from several platforms, each publishing different groups of targets from our Kotlin configuration:
     # - macOS for publishing our native macOS, iOS, watchOS, and tvOS targets
-    # - Ubuntu for publishing our JVM, JavaScript, WebAssembly, and native Linux targets
-    # - Windows for publishing our native Windows targets
+    # - Windows for publishing our JVM, JavaScript, WebAssembly, native Windows, and native Linux targets
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os:
           - 'macos-latest'
-          - 'ubuntu-latest'
           - 'windows-latest'
 
-    # For the runner that's on Linux, tell it to also test our JVM, JavaScript, and WebAssembly targets, in addition to
-    # its normal Linux-specific native targets.
+    # For the runner that's on Windows, tell it to also test our JVM, JavaScript, WebAssembly, and native Linux targets,
+    # in addition to its normal Windows-specific native targets.
     env:
-      MEW_TARGET: ${{ startsWith(matrix.os, 'ubuntu') && 'all' || 'native' }}
+      MEW_TARGET: ${{ startsWith(matrix.os, 'windows') && 'all' || 'native' }}
 
     steps:
       - uses: actions/checkout@v3
