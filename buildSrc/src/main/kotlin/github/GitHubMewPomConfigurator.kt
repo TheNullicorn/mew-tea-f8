@@ -57,6 +57,12 @@ internal fun GitHubMewPomConfigurator(environment: MewGitHubConfig): MewPomConfi
         }
     }
 
+    // Use Gradle to get the project's name instead of GitHub since subprojects can have their own unique names.
+    name.set(environment.project.name)
+
+    // Get the repo's URL, or fill it in manually if it can't be retrieved off the `repository` object for some reason.
+    url.set(repository.htmlUrl?.toString() ?: "https://github.com/${environment.owner}/${environment.repository}")
+
     // If the repository has a non-blank description, copy that into the POM.
     if (repository.description?.isBlank() == false)
         description.set(repository.description!!)

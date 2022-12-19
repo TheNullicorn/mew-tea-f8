@@ -5,7 +5,7 @@ import org.gradle.api.Project
 /**
  * Configuration for the GitHub repository that the project's code is hosted on.
  */
-class MewGitHubConfig(private val project: Project) {
+class MewGitHubConfig(internal val project: Project) {
 
     /**
      * The name of the "tree" that the current code is from or is going to be pushed to.
