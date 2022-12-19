@@ -26,7 +26,7 @@ repositories {
 kotlin.sourceSets {
     val commonMain by getting {
         dependencies {
-            api(project(":mew-tea-f8-common"))
+            api(project(":mew-tea-f8-core"))
             implementation(libs.bundles.kotlin.test)
         }
     }

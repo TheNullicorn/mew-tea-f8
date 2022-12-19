@@ -818,7 +818,7 @@ public class ByteArrayMutf8Sink extends Mutf8Sink {
 ## Installation
 
 Depending on how you're already doing reading & writing in your project, this library comes with a couple of submodules
-for common I/O libs.
+for common I/O libraries.
 
 1. Click on the dependency(ies) your project needs in the table below
     1. If your project uses the Kotlin gradle plugin, use the links in the *"Dependency (for Kotlin Projects)"* column
@@ -833,18 +833,18 @@ for common I/O libs.
 
 | I/O Interface                                           | Dependency (for Kotlin Projects)   | Dependency (for Java Projects)             | 
 |---------------------------------------------------------|------------------------------------|--------------------------------------------|
-| java.io (`InputStream`/`OutputStream`)                  | [mew-tea-f8-common][mvnrepo-main]  | [mew-tea-f8-common-jvm][mvnrepo-main-jvm]  |
+| java.io (`InputStream`/`OutputStream`)                  | [mew-tea-f8-core][mvnrepo-core]    | [mew-tea-f8-core-jvm][mvnrepo-core-jvm]    |
 | okio (`Source`/`Sink`, `BufferedSource`/`BufferedSink`) | [mew-tea-f8-okio][mvnrepo-okio]    | [mew-tea-f8-okio-jvm][mvnrepo-okio-jvm]    |
 | ktor / ktor-io (`Input`/`Output`)                       | [mew-tea-f8-ktor-io][mvnrepo-ktor] | [mew-tea-f8-ktor-io-jvm][mvnrepo-ktor-jvm] |
-| Other / Custom                                          | [mew-tea-f8-common][mvnrepo-main]  | [mew-tea-f8-common-jvm][mvnrepo-main-jvm]  |
+| Other / Custom                                          | [mew-tea-f8-core][mvnrepo-core]    | [mew-tea-f8-core-jvm][mvnrepo-core-jvm]    |
 
-[mvnrepo-main]: https://mvnrepository.com/artifact/me.nullicorn/mew-tea-f8-common
+[mvnrepo-core]: https://mvnrepository.com/artifact/me.nullicorn/mew-tea-f8-core
 
 [mvnrepo-okio]: https://mvnrepository.com/artifact/me.nullicorn/mew-tea-f8-okio
 
 [mvnrepo-ktor]: https://mvnrepository.com/artifact/me.nullicorn/mew-tea-f8-ktor-io
 
-[mvnrepo-main-jvm]: https://mvnrepository.com/artifact/me.nullicorn/mew-tea-f8-common-jvm
+[mvnrepo-core-jvm]: https://mvnrepository.com/artifact/me.nullicorn/mew-tea-f8-core-jvm
 
 [mvnrepo-okio-jvm]: https://mvnrepository.com/artifact/me.nullicorn/mew-tea-f8-okio-jvm
 
